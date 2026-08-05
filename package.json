@@ -1,0 +1,28 @@
+{
+  "name": "team4_futurecoders_lms",
+  "version": "1.0.0",
+  "description": "Phase2- LMS-UI- Automation",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JayammaKN/Team4_FutureCoders_LMS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/JayammaKN/Team4_FutureCoders_LMS/issues"
+  },
+  "homepage": "https://github.com/JayammaKN/Team4_FutureCoders_LMS#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.1.2",
+    "allure-playwright": "^3.10.2"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "playwright-bdd": "^9.2.0"
+  }
+}

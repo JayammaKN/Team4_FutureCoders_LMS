@@ -1,4 +1,15 @@
 
+
+
+
+
+
+
+.features-gen/
+# Environment
+.env
+.env.*
+
 # Playwright
 node_modules/
 /test-results/
@@ -7,4 +18,47 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 /allure-results/
-/.env/
+
+# Logs
+/logs/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

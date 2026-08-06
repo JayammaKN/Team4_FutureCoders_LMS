@@ -77,3 +77,18 @@ Then('Admin should  see {string} in the second text field', async ({ page, login
     await expect(page.locator(loginFixture.passwordField)).toHaveAttribute('placeholder', text);
 
 });
+
+// ----------------------------------------Login Page - Functional Verification----------------------------------------------
+
+Given('Admin is on login Page', async ({loginFixture}) => {
+      await loginFixture.openValidUrl();
+});
+
+When('Admin clicks login in button after entering  a valid credential', async ({loginFixture}) => {
+    await loginFixture.login();
+});
+
+Then('Admin should land on home page', async ({loginFixture}) => {
+  
+});
+

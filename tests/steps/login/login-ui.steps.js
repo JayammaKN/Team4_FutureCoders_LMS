@@ -1,0 +1,125 @@
+import { expect } from '@playwright/test';
+import { createBdd } from 'playwright-bdd';
+import { test } from '../../fixture/fixtures.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const loginData = require('../../test-data/loginData.json');
+
+const { Given, When, Then } = createBdd(test);
+
+// 1
+Given('Admin is on the browser', async ({ page }) => {
+  await page.goto('about:blank');
+});
+
+// 2
+When('Admin enters the Valid LMS app URL', async ({ loginFixture }) => {
+  await loginFixture.openValidUrl();
+});
+
+// 3
+Then('Admin should land on the login page', async ({ page }) => {
+  await expect(page).toHaveURL(/login/);
+});
+
+// 4
+When('Admin enters the invalid LMS app URL', async ({ loginFixture }) => {
+  await loginFixture.openInvalidUrl();
+});
+
+// 5
+Then('Admin should receive application error', async ({ loginFixture }) => {
+  await expect(loginFixture.navigationFailed()).toBe(true);
+});
+
+// 6
+Then('HTTP response < {int}. Then the link is working', async ({ loginFixture }, code) => {
+  const status = await loginFixture.getResponseStatus();
+  await expect(status).toBeLessThan(code);
+});
+
+// 7
+Then('Admin should see the application title', async ({ page, loginFixture }) => {
+  await expect(page).toHaveTitle(loginFixture.getTitle());
+});
+
+// 8
+Then('Admin should see Application Logo', async ({ page, loginFixture }) => {
+  await expect(page.locator(loginFixture.logo)).toBeVisible();
+});
+
+// 9
+Then('Admin should see company name below the app name', async ({ page, loginFixture }) => {
+  await expect(page.locator(loginFixture.companyName)).toBeVisible();
+});
+
+// 10
+Then('Admin should see the login message', async ({ page, loginFixture }) => {
+  await expect(page.locator(`text=${loginFixture.getLoginMessage()}`)).toBeVisible();
+});
+
+// 11
+Then('Admin should see two text field', async ({ page, loginFixture }) => {
+  await expect(page.locator(loginFixture.userField)).toBeVisible();
+  await expect(page.locator(loginFixture.passwordField)).toBeVisible();
+});
+
+// 12
+Then('Admin should see one dropdown', async ({ page, loginFixture }) => {
+  await expect(page.locator(loginFixture.roleDropdown)).toBeVisible();
+});
+
+// 13
+Then('Admin should see "User" in the first text field', async ({ page, loginFixture }) => {
+  await expect(page.locator(loginFixture.userField)).toHaveAttribute('data-placeholder', loginData.placeholders.username);
+});
+
+// 14
+Then('Admin should see "Password" in the second text field', async ({ page, loginFixture }) => {
+  await expect(page.locator(loginFixture.passwordField)).toHaveAttribute('data-placeholder', loginData.placeholders.password);
+});
+
+// 15
+Then('Admin should see asterisk mark\\(*) symbol next to text for user field', async ({ loginFixture }) => {
+  await expect(loginFixture.requiredMarkerFor(loginFixture.userField)).toBeVisible();
+});
+
+// 16
+Then('Admin should see asterisk mark symbol next to password text', async ({ loginFixture }) => {
+  await expect(loginFixture.requiredMarkerFor(loginFixture.passwordField)).toBeVisible();
+});
+
+// 17
+Then('Admin should see {string} placeholder in dropdown', async ({ page, loginFixture }, text) => {
+  await expect(page.locator(loginFixture.roleDropdown)).toHaveAttribute('placeholder', text);
+});
+
+// 18
+Then('Admin should see {string}, {string}, {string} options in dropdown', async ({ loginFixture }, opt1, opt2, opt3) => {
+  await expect(await loginFixture.getDropdownOptions()).toEqual([opt1, opt2, opt3]);
+});
+
+// 19
+Then('Admin should see login form on the centre of the page', async ({ loginFixture }) => {
+  await expect(await loginFixture.isLoginFormCentered()).toBe(true);
+});
+
+// 20
+Then('Username , Password labels and select the role should be left-aligned above their respective input fields', async ({ loginFixture }) => {
+  await expect(await loginFixture.areLabelsLeftAligned()).toBe(true);
+});
+
+// 21
+Then('Admin should see login button', async ({ page, loginFixture }) => {
+  await expect(page.locator(loginFixture.loginButton)).toBeVisible();
+});
+
+// 22
+Then('Admin should see user text in gray color', async ({ loginFixture }) => {
+  await expect(loginFixture.getPlaceholderLabel(loginFixture.userField)).toHaveCSS('color', 'rgba(0, 0, 0, 0.54)');
+});
+
+// 23
+Then('Admin should see password text in gray color', async ({ loginFixture }) => {
+  await expect(loginFixture.getPlaceholderLabel(loginFixture.passwordField)).toHaveCSS('color', 'rgba(0, 0, 0, 0.54)');
+});

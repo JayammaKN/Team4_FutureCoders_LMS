@@ -11,7 +11,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/JayammaKN/Team4_FutureCoders_LMS/issues"
   },
@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "dotenv": "^17.4.2",
-    "playwright-bdd": "^9.2.0"
+    "playwright-bdd": "^9.2.0",
+    "winston": "^3.19.0"
   }
 }

@@ -1,0 +1,18 @@
+{
+  "title": "LMS",
+  "loginMessage": "Please login to LMS application",
+  "placeholders": {
+    "username": "User",
+    "password": "Password"
+  },
+  "specialCharUsername": "!#$!",
+  "wrongPassword": "False@1234",
+  "errorMessages": {
+    "invalidCredentials": "Invalid username and password Please try again",
+    "inactiveUser": "Inactive User : Please contact Admin for assistance",
+    "emptyUsername": "Please enter your user name",
+    "emptyPassword": "Please enter your password",
+    "noRole": "Please select your Role",
+    "wrongRole": "Please select correct role"
+  }
+}

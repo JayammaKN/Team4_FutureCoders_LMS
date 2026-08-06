@@ -1,4 +1,11 @@
 
+
+
+
+
+
+
+.features-gen/
 # Environment
 .env
 .env.*
@@ -14,3 +21,44 @@ node_modules/
 
 # Logs
 /logs/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

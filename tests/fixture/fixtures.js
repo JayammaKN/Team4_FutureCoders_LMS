@@ -1,5 +1,6 @@
 import { test as base } from 'playwright-bdd';
 import loginPage from '../pages/loginPage.js';
+import homePage from '../pages/HomePage.js';
 import { ENV } from '../../config/env.js';
 
 export const test = base.extend({
@@ -16,6 +17,9 @@ export const test = base.extend({
 
   loginFixture: async ({ page, envFixture }, use) => {
     await use(new loginPage(page, envFixture, test));
+  },
+  homeFixture: async ({ page, envFixture }, use) => {
+    await use(new homePage(page, envFixture, test));
   },
 
 });

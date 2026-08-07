@@ -3,19 +3,32 @@ const require = createRequire(import.meta.url);
 const loginData = require('../test-data/loginData.json');
 import logger from '../../utils/logger.js';
 
-export default class loginPage {
+export default class newPage {
 
   constructor(page, env, test) {
     this.page = page;
     this.env = env;
     this.test = test;
 
-    this.logo = 'img[src*="LMS-logo"]';
-    this.companyName = '#companyName';
-    this.userField = '#username';
-    this.passwordField = '#password';
-    this.roleDropdown = 'mat-select';
-    this.loginButton = '#login';
+    this.title = loginData.title;
+    this.loginMessage = loginData.loginMessage;
+
+    this.companyName = this.page.locator('img[src*="LMS-logo"]');
+    this.logo = this.page.locator('img[src*="LMS-logo"]');
+    this.userField = this.page.getByLabel('User');
+    this.passwordField = this.page.getByLabel('Password');
+    this.roleDropdown = this.page.getByRole('combobox', { name: 'Select the role' });
+    this.loginButton = this.page.getByRole('button', { name: 'Login' });
+    this.logoutButton = this.page.getByRole('button', { name: 'Logout' });
+    this.homeButton = this.page.getByRole('button', { name: 'Home' });
+    this.programButton = this.page.getByRole('button', { name: 'Program' });
+    this.batchButton = this.page.getByRole('button', { name: 'Batch' });
+
+    this.userFieldById = this.page.locator('#username');
+    this.passwordFieldById = this.page.locator('#password');
+    this.roleDropdownById = this.page.locator('mat-select');
+    this.loginButtonById = this.page.locator('#login');
+    this.logoutButtonById = this.page.locator('#logout');
   }
 
   async openValidUrl() {
@@ -57,12 +70,12 @@ export default class loginPage {
 
   async login({ username = this.env.username, password = this.env.password, role = this.env.role } = {}) {
     await this.test.step(`Login as ${username || this.env.username}`, async () => {
-      if (username) await this.page.fill(this.userField, username);
-      if (password) await this.page.fill(this.passwordField, password);
+      if (username) await this.userField.fill(username);
+      if (password) await this.passwordField.fill(password);
       if (role) {
         await this.selectRole(role);
       }
-      await this.page.click(this.loginButton);
+      await this.loginButton.click();
       await this.waitForLoginResult();
       if (await this.isHomePage()) {
         logger.loginSuccess(username || this.env.username);
@@ -75,12 +88,12 @@ export default class loginPage {
 
   async loginWithKeyboard() {
     await this.test.step('Login using keyboard only', async () => {
-      await this.page.locator(this.userField).pressSequentially(this.env.username);
-      await this.page.locator(this.passwordField).pressSequentially(this.env.password);
-      await this.page.locator(this.roleDropdown).press('Enter');
+      await this.userField.pressSequentially(this.env.username);
+      await this.passwordField.pressSequentially(this.env.password);
+      await this.roleDropdown.press('Enter');
       await this.page.keyboard.press('Enter');
       await this.page.keyboard.press('Escape');
-      await this.page.locator(this.loginButton).press('Enter');
+      await this.loginButton.press('Enter');
       await this.waitForLoginResult();
       if (await this.isHomePage()) {
         logger.loginSuccess(this.env.username);
@@ -93,31 +106,31 @@ export default class loginPage {
 
   async waitForLoginResult() {
     await Promise.race([
-      this.page.locator('text=Logout').waitFor({ timeout: 15000 }).catch(() => {}),
-      this.page.locator('mat-error').first().waitFor({ timeout: 15000 }).catch(() => {}),
+      this.logoutButton.waitFor({ timeout: 15000 }).catch(() => {}),
+      this.page.getByRole('alert').first().waitFor({ timeout: 15000 }).catch(() => {}),
     ]);
   }
 
   async selectRole(role, method = 'mouse') {
-    await this.page.click(this.roleDropdown);
+    await this.roleDropdown.click();
     if (method === 'keyboard') {
       await this.page.keyboard.type(role[0]);
       await this.page.keyboard.press('Enter');
     } else {
-      await this.page.locator('mat-option', { hasText: role }).click();
+      await this.page.getByRole('option', { name: role }).click();
     }
   }
 
   getError(message) {
-    return this.page.locator('mat-error', { hasText: message.trim() });
+    return this.page.getByRole('alert').filter({ hasText: message.trim() });
   }
 
   async getErrorMessages() {
-    return (await this.page.locator('mat-error').allTextContents()).map((t) => t.trim());
+    return (await this.page.getByRole('alert').allTextContents()).map((t) => t.trim());
   }
 
   async isHomePage() {
-    return this.page.locator('text=Logout').first().isVisible().catch(() => false);
+    return this.logoutButton.first().isVisible().catch(() => false);
   }
 
   getTitle() {
@@ -128,35 +141,39 @@ export default class loginPage {
     return loginData.loginMessage;
   }
 
-  requiredMarkerFor(id) {
+  async getPageTitle() {
+    return this.page.title();
+  }
+
+  requiredMarkerFor(field) {
     return this.page
-      .locator('mat-form-field', { has: this.page.locator(id) })
+      .locator('mat-form-field', { has: field })
       .locator('.mat-form-field-required-marker');
   }
 
-  getPlaceholderLabel(id) {
+  getPlaceholderLabel(field) {
     return this.page
-      .locator('mat-form-field', { has: this.page.locator(id) })
+      .locator('mat-form-field', { has: field })
       .locator('.mat-form-field-label');
   }
 
   async getDropdownOptions() {
-    await this.page.locator(this.roleDropdown).click();
-    const texts = await this.page.locator('mat-option').allTextContents();
+    await this.roleDropdown.click();
+    const texts = await this.page.getByRole('option').allTextContents();
     await this.page.keyboard.press('Escape');
     return texts.map((t) => t.trim());
   }
 
   async isLoginFormCentered() {
-    const box = await this.page.locator('form').boundingBox();
+    const box = await this.page.locator('form').first().boundingBox();
     const viewport = this.page.viewportSize();
     return Math.abs(box.x + box.width / 2 - viewport.width / 2) < 2;
   }
 
   async areLabelsLeftAligned() {
-    const aligned = async (id) => {
-      const fieldBox = await this.page.locator(id).boundingBox();
-      const labelBox = await this.getPlaceholderLabel(id).boundingBox();
+    const aligned = async (field) => {
+      const fieldBox = await field.boundingBox();
+      const labelBox = await this.getPlaceholderLabel(field).boundingBox();
       return Math.abs(fieldBox.x - labelBox.x) < 2;
     };
     return (

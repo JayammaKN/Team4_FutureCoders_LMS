@@ -1,35 +1,34 @@
-import winston from 'winston';
-import path from 'path';
-import { fileURLToPath } from 'url';
+// Simple logger - prints messages with a timestamp to the console.
+// It can easily be replaced with a logging library like winston later.
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const logDir = path.join(__dirname, '..', 'logs');
+function timestamp() {
+  return new Date().toISOString();
+}
 
-const customFormat = winston.format.combine(
-  winston.format.timestamp(),
-  winston.format.printf(({ level, message, timestamp }) =>
-    `[${level.toUpperCase()}] ${timestamp} - ${message}`
-  )
-);
+const logger = {
+  info(message) {
+    console.log(`[INFO] ${timestamp()} - ${message}`);
+  },
+  warn(message) {
+    console.warn(`[WARN] ${timestamp()} - ${message}`);
+  },
+  error(message) {
+    console.error(`[ERROR] ${timestamp()} - ${message}`);
+  },
+  debug(message) {
+    console.log(`[DEBUG] ${timestamp()} - ${message}`);
+  },
 
-const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'debug',
-  format: customFormat,
-  transports: [
-    new winston.transports.Console({
-      format: winston.format.combine(winston.format.colorize(), customFormat),
-    }),
-    new winston.transports.File({
-      filename: path.join(logDir, 'app.log'),
-      maxsize: 5_000_000,
-      maxFiles: 5,
-      tailable: true,
-    }),
-  ],
-});
-
-logger.loginSuccess = (username) => logger.info(`Login successful for user: ${username}`);
-logger.loginFailed = (username, reason) => logger.error(`Login failed for user: ${username} - Reason: ${reason}`);
-logger.navigation = (url, status) => logger.info(`Navigated to ${url} - HTTP ${status}`);
+  // Helper methods used by the pages
+  loginSuccess(username) {
+    this.info(`Login successful for user: ${username}`);
+  },
+  loginFailed(username, reason) {
+    this.error(`Login failed for user: ${username} - Reason: ${reason}`);
+  },
+  navigation(url, status) {
+    this.info(`Navigated to ${url} - HTTP ${status}`);
+  },
+};
 
 export default logger;

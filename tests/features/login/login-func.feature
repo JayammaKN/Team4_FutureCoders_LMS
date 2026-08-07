@@ -1,3 +1,5 @@
+
+@login
 Feature: Login Page - Functional Verification
 
 Background: Admin enters the Valid LMS app URL

@@ -11,9 +11,6 @@ export class ProgramPage
     this.page = page;
     this.env = env;
     this.test = test;
-
-    this.logo = 'img[src*="LMS-logo"]';
-    this.companyName = '#companyName';
     this.userField = '#username';
     this.passwordField = '#password';
     this.roleDropdown = 'mat-select';

@@ -47,6 +47,14 @@ When('Admin enter valid details for mandatory fields and Click on save button', 
    await programFixture.enterValidDetails();
 });
 
-Then('Admin gets message Successful Program created', async ({ page  }) => {
-    
+Then('Admin gets message Successful Program created', async ({ programFixture  }) => {
+    await programFixture.successfullBinkText();
+});
+
+When('Admin enters a numeric value as the Program Name', async ({ programFixture  }) => {
+   await programFixture.enterInValidDetails();
+});
+
+Then('Admin should see error message', async ({ programFixture  }) => {
+    await programFixture.verifyErrorMessage();
 });

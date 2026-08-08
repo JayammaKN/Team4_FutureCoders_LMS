@@ -20,3 +20,7 @@ Scenario: Close button X functionality
 Scenario: Add new program with valid details
   When Admin enter valid details for mandatory fields and Click on save button
   Then Admin gets message Successful Program created
+
+Scenario: Add new program with numeric program name
+  When Admin enters a numeric value as the Program Name
+  Then Admin should see error message

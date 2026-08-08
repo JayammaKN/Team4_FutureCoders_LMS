@@ -1,3 +1,7 @@
 {
-    
+  "programName": "happyfour",
+  "programDescription": "Nova Description",
+  "invalidProgramName": "12Nova",
+  "newProgramName": "happyfournew",
+  "newProgramDescription": "Nova happy new"
 }

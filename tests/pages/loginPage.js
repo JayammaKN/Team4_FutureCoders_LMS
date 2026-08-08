@@ -3,19 +3,32 @@ const require = createRequire(import.meta.url);
 const loginData = require('../test-data/loginData.json');
 import logger from '../../utils/logger.js';
 
-export default class loginPage {
+export default class newPage {
 
   constructor(page, env, test) {
     this.page = page;
     this.env = env;
     this.test = test;
 
-    this.logo = 'img[src*="LMS-logo"]';
-    this.companyName = '#companyName';
-    this.userField = '#username';
-    this.passwordField = '#password';
-    this.roleDropdown = 'mat-select';
-    this.loginButton = '#login';
+    this.title = loginData.title;
+    this.loginMessage = loginData.loginMessage;
+
+    this.companyName = this.page.locator('img[src*="LMS-logo"]');
+    this.logo = this.page.locator('img[src*="LMS-logo"]');
+    this.userField = this.page.getByLabel('User');
+    this.passwordField = this.page.getByLabel('Password');
+    this.roleDropdown = this.page.getByRole('combobox', { name: 'Select the role' });
+    this.loginButton = this.page.getByRole('button', { name: 'Login' });
+    this.logoutButton = this.page.getByRole('button', { name: 'Logout' });
+    this.homeButton = this.page.getByRole('button', { name: 'Home' });
+    this.programButton = this.page.getByRole('button', { name: 'Program' });
+    this.batchButton = this.page.getByRole('button', { name: 'Batch' });
+
+    this.userFieldById = this.page.locator('#username');
+    this.passwordFieldById = this.page.locator('#password');
+    this.roleDropdownById = this.page.locator('mat-select');
+    this.loginButtonById = this.page.locator('#login');
+    this.logoutButtonById = this.page.locator('#logout');
   }
 
   async openValidUrl() {
@@ -57,12 +70,12 @@ export default class loginPage {
 
   async login({ username = this.env.username, password = this.env.password, role = this.env.role } = {}) {
     await this.test.step(`Login as ${username || this.env.username}`, async () => {
-      if (username) await this.page.fill(this.userField, username);
-      if (password) await this.page.fill(this.passwordField, password);
+      if (username) await this.userField.fill(username);
+      if (password) await this.passwordField.fill(password);
       if (role) {
         await this.selectRole(role);
       }
-      await this.page.click(this.loginButton);
+      await this.loginButton.click();
       await this.waitForLoginResult();
       if (await this.isHomePage()) {
         logger.loginSuccess(username || this.env.username);
@@ -99,12 +112,12 @@ export default class loginPage {
   }
 
   async selectRole(role, method = 'mouse') {
-    await this.page.click(this.roleDropdown);
+    await this.roleDropdown.click();
     if (method === 'keyboard') {
       await this.page.keyboard.type(role[0]);
       await this.page.keyboard.press('Enter');
     } else {
-      await this.page.locator('mat-option', { hasText: role }).click();
+      await this.page.getByRole('option', { name: role }).click();
     }
   }
 

@@ -1,6 +1,13 @@
 pipeline {
     agent any
 
+    environment {
+        LMS_URL = credentials('lms-url')
+        LMS_USERNAME = credentials('lms-username')
+        LMS_PASSWORD = credentials('lms-password')
+        LMS_ROLE = credentials('lms-role')
+    }
+
     tools {
         nodejs 'NodeJS'
         jdk 'JDK21'
@@ -27,6 +34,16 @@ pipeline {
                 bat 'npm ci'
             }
         }
+
+        stage('Verify Environment') {
+            steps {
+        bat 'if defined LMS_URL (echo LMS_URL is set) else (echo LMS_URL is NOT set)'
+        bat 'if defined LMS_USERNAME (echo LMS_USERNAME is set) else (echo LMS_USERNAME is NOT set)'
+        bat 'if defined LMS_PASSWORD (echo LMS_PASSWORD is set) else (echo LMS_PASSWORD is NOT set)'
+        bat 'if defined LMS_ROLE (echo LMS_ROLE is set) else (echo LMS_ROLE is NOT set)'
+            }
+        }
+
         stage('Generate BDD Tests') {
             steps {
                 bat 'npx bddgen'

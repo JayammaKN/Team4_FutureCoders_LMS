@@ -27,6 +27,11 @@ pipeline {
                 bat 'npm ci'
             }
         }
+        stage('Generate BDD Tests') {
+            steps {
+                bat 'npx bddgen'
+            }
+        }
 
         stage('Install Playwright Browsers') {
             steps {

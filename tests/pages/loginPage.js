@@ -112,8 +112,6 @@ export default class LoginPage {
       this.attempts.push({ username, password, role, errors });
     });
   }
-
-  // Same as login() but typing with the keyboard only (no mouse clicks)
   async loginWithKeyboard() {
     await this.test.step('Login using keyboard only', async () => {
       await this.userField.pressSequentially(this.env.username);

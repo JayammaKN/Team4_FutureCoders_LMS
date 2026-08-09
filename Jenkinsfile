@@ -41,7 +41,7 @@ pipeline {
                 bat 'if exist test-results rmdir /s /q test-results'
                 bat 'if exist playwright-report rmdir /s /q playwright-report'
                 bat 'mkdir allure-results'
-                bat 'npx playwright test --grep "@LoginScenario" --project=chromium'
+                bat 'npx playwright test --grep "@Program Navigation" --project=chromium'
             }
         }
 

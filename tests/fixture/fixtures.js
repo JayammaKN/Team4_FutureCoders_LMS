@@ -1,6 +1,6 @@
 import { test as base } from 'playwright-bdd';
 import loginPage from '../pages/loginPage.js';
-import { HomePage } from '../pages/HomePage.js';
+import { HomePage } from '../pages/homePage.js';
 import logoutPage from '../pages/logoutPage.js';
 import { ENV } from '../../config/env.js';
 

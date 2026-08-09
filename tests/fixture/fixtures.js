@@ -9,7 +9,6 @@ export const test = base.extend({
   envFixture: async ({}, use) => {
     await use({
       validUrl: ENV.BASE_URL,
-      invalidUrl: ENV.INVALID_URL,
       username: ENV.USERNAME,
       password: ENV.PASSWORD,
       role: ENV.ROLE,

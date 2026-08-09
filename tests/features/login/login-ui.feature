@@ -8,9 +8,9 @@ Feature: Login UI Verification
     When Admin enters the Valid LMS app URL
     Then Admin should land on the login page
 
-  Scenario: Access app with invalid URL
-    When Admin enters the invalid LMS app URL
-    Then Admin should receive application error
+  Scenario: Access app with any invalid URL
+    When Admin enters each invalid LMS app URL
+    Then Admin should receive an application error for every invalid URL
 
   Scenario: Broken link verification
     When Admin enters the Valid LMS app URL

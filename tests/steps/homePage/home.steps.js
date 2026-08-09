@@ -3,12 +3,7 @@ import { createBdd } from 'playwright-bdd';
 
 import { test } from '../../fixture/fixtures.js';
 
-import { createRequire } from 'module';
-
-const require = createRequire(import.meta.url);
-
-const homeData =
-    require('../../test-data/homeData.json');
+import homeData from '../../test-data/homeData.json' with { type: 'json' };
 
 const { Then } = createBdd(test);
 
@@ -191,37 +186,19 @@ Then(
     }
 );
 
-
-// =====================================================
-// 11. BAR CHART
-//
-// Verified from the UI only: the bar chart must show two
-// datasets labelled "Active" and "Inactive". The app currently
-// shows "Undefined" for the Inactive bar (its label is empty),
-// so this test is expected to fail until that bug is fixed.
-// =====================================================
-
 Then(
     'Admin should see bar chart for Active and inactive user',
-    async ({ homeFixture }) => {
-
-        await expect(
-            homeFixture.barChart
-        ).toBeVisible();
-
-        // The chart data takes a moment to load, so we keep
-        // polling until getBarChartData() returns real data.
+    async ({ homeFixture }) => { 
+        await expect(homeFixture.barChart).toBeVisible();
         let chartData = null;
 
-        await expect
-            .poll(async () => {
+        await expect.poll(async () => {
                 chartData = await homeFixture.getBarChartData();
                 return chartData;
             })
             .not.toBeNull();
 
-        expect(chartData.datasetCount)
-            .toBe(2);
+        expect(chartData.datasetCount).toBe(2);
 
         expect(chartData.labels)
             .toContain('Active');
@@ -230,118 +207,43 @@ Then(
             .toContain('Inactive');
     }
 );
-
-
-// =====================================================
-// 12. USER COUNT CARD
-// =====================================================
-
-// =====================================================
-// 12. USER COUNT CARD
-//
-// Admin should see some number (count) on the User card.
-// =====================================================
-
 Then(
     'Admin should see user count',
     async ({ homeFixture }) => {
-
-        await expect(
-            homeFixture.userCard
-        ).toBeVisible();
-
-        // The card shows a number (any number is fine)
-        await expect(
-            homeFixture.getCardNumber('User')
-        ).toHaveText(/\d+/);
+        await expect(homeFixture.userCard).toBeVisible();
+        await expect(homeFixture.getCardNumber('User')).toHaveText(/\d+/); //Make sure the User card's number box has some number in it//EX:text like "0", "42", or "1,234" passes; empty text or "N/A" fails
     }
 );
-
-
-// =====================================================
-// 13. PROGRAM COUNT CARD
-//
-// Admin should see some number (count) on the Program card.
-// =====================================================
-
 Then(
     'Admin should see Program count',
     async ({ homeFixture }) => {
-
-        await expect(
-            homeFixture.programCard
-        ).toBeVisible();
-
-        // The card shows a number (any number is fine)
-        await expect(
-            homeFixture.getCardNumber('Programs')
-        ).toHaveText(/\d+/);
+        await expect(homeFixture.programCard).toBeVisible();
+        await expect(homeFixture.getCardNumber('Programs')).toHaveText(/\d+/);
     }
 );
-
-
-// =====================================================
-// 14. STAFF COUNT CARD
-//
-// Admin should see some number (count) on the Staff card.
-// =====================================================
-
 Then(
     'Admin should see Staff count',
     async ({ homeFixture }) => {
 
-        await expect(
-            homeFixture.staffCard
-        ).toBeVisible();
-
-        // The card shows a number (any number is fine)
-        await expect(
-            homeFixture.getCardNumber('Staff')
-        ).toHaveText(/\d+/);
+        await expect(homeFixture.staffCard).toBeVisible();
+        await expect(homeFixture.getCardNumber('Staff')).toHaveText(/\d+/);
     }
 );
-
-
-// =====================================================
-// 15. BATCH COUNT CARD
-//
-// Admin should see some number (count) on the Batch card.
-// =====================================================
-
 Then(
     'Admin should see batch count',
     async ({ homeFixture }) => {
 
-        await expect(
-            homeFixture.batchCard
-        ).toBeVisible();
-
-        // The card shows a number (any number is fine)
-        await expect(
-            homeFixture.getCardNumber('Batches')
-        ).toHaveText(/\d+/);
+        await expect(homeFixture.batchCard).toBeVisible();
+        await expect(homeFixture.getCardNumber('Batches')).toHaveText(/\d+/);
     }
 );
-
-
-// =====================================================
-// 16. STAFF DATA TABLE
-// =====================================================
-
 Then(
     'Admin should see the Staff Data table',
     async ({ homeFixture }) => {
 
-        await expect(
-            homeFixture.staffTable
-        ).toBeVisible();
+        await expect(homeFixture.staffTable).toBeVisible();
     }
 );
-
-
-// =====================================================
-// 17. STAFF TABLE HEADERS
-// =====================================================
 
 Then(
     'Admin should see the headers #, First Name, Last Name, Phone in the Staff Data table',

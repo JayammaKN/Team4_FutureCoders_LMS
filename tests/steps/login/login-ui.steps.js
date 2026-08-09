@@ -1,9 +1,7 @@
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import { test } from '../../fixture/fixtures.js';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const loginData = require('../../test-data/loginData.json');
+import loginData from '../../test-data/loginData.json' with { type: 'json' };
 
 const { Given, When, Then } = createBdd(test);
 
@@ -22,14 +20,15 @@ Then('Admin should land on the login page', async ({ page }) => {
   await expect(page).toHaveURL(/login/);
 });
 
-// 4
-When('Admin enters the invalid LMS app URL', async ({ loginFixture }) => {
-  await loginFixture.openInvalidUrl();
+// 4 - reusable invalid URLs (loaded from loginData.json; any invalid URL should show an error)
+When('Admin enters each invalid LMS app URL', async ({ loginFixture }) => {
+  await loginFixture.openAllInvalidUrls();
 });
 
 // 5
-Then('Admin should receive application error', async ({ loginFixture }) => {
-  await expect(loginFixture.navigationFailed()).toBe(true);
+Then('Admin should receive an application error for every invalid URL', async ({ loginFixture }) => {
+  const failedUrls = await loginFixture.getInvalidUrlFailures();
+  await expect(failedUrls, 'Invalid URLs that did NOT show an error').toEqual([]);
 });
 
 // 6

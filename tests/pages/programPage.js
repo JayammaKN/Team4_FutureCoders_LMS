@@ -32,6 +32,12 @@ export class ProgramPage
     this.searchInput = this.page.locator("//input[@placeholder='Search...']");
     this.editButton = this.page.locator("//button[@id='editProgram']").first();
     this.newSuccessMessage = page.locator("//div[normalize-space()='Program Updated']");
+    this.deleteicon = this.page.locator("//button[@id='deleteProgram']").first();
+    this.confirmPage = this.page.locator("//span[normalize-space()='Confirm']");
+    this.yesButton = this.page.locator("//button[@ng-reflect-label='Yes']")
+    this.programDeletedMessage = this.page.locator("//div[normalize-space()='Program Deleted']");
+    this.sortArrow = this.page.locator("//p-sorticon").first();
+    this.sortArrowDesc = this.page.locator("//p-sorticon").nth(2);
 
   }
 
@@ -115,4 +121,52 @@ export class ProgramPage
     await expect(this.page.getByText(this.newProgramDescription)).toBeVisible();
   }
 
+  async clickDeleteButton() {
+    await this.page.mouse.click(500, 300);
+    await this.deleteicon.click();
+  }
+
+  async confirmDelete() {
+    await expect(this.confirmPage).toBeVisible();
+    await this.yesButton.click();
+    await expect(this.programDeletedMessage).toBeVisible();
+  }
+
+  async clickSortArrow() {
+    await this.page.mouse.click(500, 300);
+    await this.sortArrow.click();
+  }
+
+  async verifyAscendingOrder() {
+    const programNames = (await this.page.locator("//td[1]").allTextContents()).map(name => name.trim()).filter(Boolean);
+    const sortedProgramNames = [...programNames].sort((a, b) => a.localeCompare(b));
+    expect(programNames).toEqual(sortedProgramNames);
+  }
+
+  async verifyDescendingOrder(){
+    await this.sortArrow.click();
+    const programNames = (await this.page.locator("//td[1]").allTextContents()).map(name => name.trim()).filter(Boolean);
+    const sortedProgramNames = [...programNames].sort((a, b) => b.localeCompare(a));
+    expect(programNames).toEqual(sortedProgramNames);
+
+  }
+
+  async clickSortArrowDesc(){
+      await this.page.mouse.click(500, 300);
+      await this.sortArrowDesc.click();
+  }
+
+    async verifyAscendingOrderDesc() {
+    const programNames = (await this.page.locator("//td[1]").allTextContents()).map(name => name.trim()).filter(Boolean);
+    const sortedProgramNames = [...programNames].sort((a, b) => a.localeCompare(b));
+    expect(programNames).toEqual(sortedProgramNames);
+  }
+
+  async verifyDescendingOrderDesc(){
+    await this.sortArrow.click();
+    const programDesc = (await this.page.locator("//td[2]").allTextContents()).map(name => name.trim()).filter(Boolean);
+    const sortedProgramDesc = [...programDesc].sort((a, b) => b.localeCompare(a));
+    expect(programDesc).toEqual(sortedProgramDesc);
+
+  }
 }

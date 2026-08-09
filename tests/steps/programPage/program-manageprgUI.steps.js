@@ -10,20 +10,6 @@ const programData = require('../../test-data/programData.json');
 const loginData = require('../../test-data/loginData.json');
 const { Given, When, Then } = createBdd(test);
 
-/*
-Given('Admin is logged in to LMS Portal', async ({ programFixture  }) => {
-await programFixture.loginApplication();
-});
-
-
-Given('Admin is on home page after Login', async ({ page }) => {
-  await expect(page).toHaveTitle('LMS');
-});
-
-When('Admin clicks "Program" on the navigation bar', async ({ programFixture  }) => {
-  await programFixture.clickProgram();
-});
-*/
 Then('Admin should see heading as "Manage Program"', async ({ page }) => {
 await expect(page.getByText('Manage Program')).toBeVisible();
 });
@@ -49,15 +35,10 @@ await expect(page.getByRole('columnheader', { name: 'Edit / Delete' })).toBeVisi
 });
 
 Then('Admin should see checkbox default state as unchecked', async ({ page }) => {
-//await expect(page.locator("//thead[@class='p-datatable-thead']//div[@role='checkbox']")).toHaveAttribute('aria-hidden', 'false');
 await expect(page.locator("//thead[@class='p-datatable-thead']//div[@role='checkbox']")).not.toBeChecked();
 });
 
 Then('Admin should see check box default state as unchecked on the left side', async ({ page }) => {
-
-//await expect(page.locator("//div[@role='checkbox']")).toHaveAttribute('aria-checked', 'false');
-
- //const checkboxes = page.locator("//div[@role='checkbox']");
  const checkboxes = page.locator("//div[@role='checkbox' and @aria-checked='false']");
  const count = await checkboxes.count();
  for (let i = 0; i < count; i++) 
@@ -67,8 +48,6 @@ Then('Admin should see check box default state as unchecked on the left side', a
 });
 
 Then('Admin should see the sort arrow icon', async ({ page }) => {
-//await expect(page.locator("//p-sorticon")).toBeVisible();
-
 const sortIcons = page.locator("//p-sorticon");
 const count = await sortIcons.count();
 for (let i = 0; i < count; i++) {
@@ -90,17 +69,13 @@ for (let i=0;i<deleteCount;i++) {
 });
 
 Then('Admin should see the text as "Showing x to y of z entries"', async ({ page }) => {
-  
   const pagination = page.locator("[class*='p-paginator-current']");
   await expect(pagination).toBeVisible();
   const text = await pagination.innerText();
   console.log("Pagination text:", text);
   await expect(pagination).toHaveText(/Showing \d+ to \d+ of \d+ entries/);
-
-  //await expect(page.locator("[class*='p-paginator-current']")).toHaveText(/Showing \d+ to \d+ of \d+ entries/);
 });
 
 Then('Admin should see the footer', async ({ page }) => {
 await expect(page.locator("[class*='p-datatable-footer']")).toHaveText(/In total there are \d+ programs/);
-
 });

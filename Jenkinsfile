@@ -57,3 +57,4 @@ pipeline {
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
         }
     }
+}

@@ -1,9 +1,10 @@
 import { test as base } from 'playwright-bdd';
 import loginPage from '../pages/loginPage.js';
 import BatchPagePO from '../pages/BatchPagePO.js';
+import { ENV } from '../../config/env.js';
 
 // Load .env (your custom path)
-dotenv.config({ path: '/custom/path/.env' });
+// dotenv.config({ path: '/custom/path/.env' });
 
 export const test = base.extend({
 

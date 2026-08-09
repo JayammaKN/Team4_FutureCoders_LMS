@@ -1,3 +1,6 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const batchData = require('../test-data/batchData.json');
 export default class BatchPagePO {
 
   constructor(page, env) {
@@ -19,6 +22,31 @@ export default class BatchPagePO {
     this.addNewBatchButton = page.getByText('Add New Batch');
     this.batchDialogBox = page.locator("//div[@role='dialog']");
     this.batchNameinputField = page.locator("//label[text()='Batch Name']/following::input[1]");
+    this.descriptionInput = page.locator("//input[@id='batchDescription']");
+    this.noOfClassesInput = page.locator("//input[@id='batchNoOfClasses']");
+    this.programNameDropdown = page.locator("p-autocomplete[ng-reflect-field='programName']");
+    this.statusRadioButton = page.locator('.p-radiobutton-box').first();
+    this.programNameDropdownButton = page.locator('.p-autocomplete-dropdown');
+    this.selectProgramName = page.locator("//ul[@role='listbox']//li[@role='option']");
+    this.batchNameSuffix = page.locator("//input[@id='batchName' and (not(@hidden) or @hidden='false')]");
+    this.batchSuffixErrorMessage = page.locator("//small[@id='text-danger']");
+    this.saveButton = page.getByText('Save');
+    this.batchSuccessMessage = page.locator("//div[@class='p-toast-message-content']");
+    this.successMessageSummary = page.locator(".p-toast-summary")
+    this.successMessageDetail = page.locator(".p-toast-detail");
+    this.emptyNoOfClassesFieldEmpty = page.getByText('Number of classes is required.');
+    this.cancelButton = page.getByText('Cancel');
+    this.closeButton = page.locator("//button//span[@class='p-dialog-header-close-icon ng-tns-c81-8 pi pi-times']");
+    this.dialogBoxClose = page.locator("p-dialog").filter({ hasText: "Batch Details" });
+    this.batchNameField = page.locator("#batchName").nth(1);
+    this.programNameInput = page.locator("p-autocomplete[ng-reflect-field='programName'] input.p-autocomplete-input");
+    this.deleteDialogBox = page.locator("p-confirmdialog .p-dialog");
+    this.noDdeleteButton = page.locator('.p-confirm-dialog-reject');
+    this.yesDeleteButton = page.locator('.p-confirm-dialog-accept');
+    this.batchRows = this.batchRows = page.locator("p-table table tbody tr");
+    this.deleteDialogBoxCloseIcon = page.locator('p-confirmDialog button.p-dialog-header-close');
+
+
 
   }
 
@@ -95,5 +123,183 @@ export default class BatchPagePO {
   async verifyBatchDialogBox(){
     return await this.batchDialogBox.isVisible(); 
   }
+  async verifyBatchNameInputField(){
+    return await this.batchNameinputField.isVisible();
+  }
+  async verifyDescriptionInputField(){
+    return await this.descriptionInput.isVisible();
+  }
+  async verifyNoOfClassesInputField(){
+    return await this.noOfClassesInput.isVisible();
+  }
+  async verifyProgramDropdown(){
+    return await this.programNameDropdown.isVisible();
+  }
+  async verifyStatusRadioButton(){
+    return await this.statusRadioButton.isVisible();
+  }
+  async verifyProgramDropdownButton(){
+    await this.programNameDropdownButton.click();
+  }
+  async selectProgramNameFromDropdown(){
+    await this.selectProgramName.nth(2).click();
+  }
+  async verifySelectedProgramNameInBatchPrefix(){
+    const batchPrefix = await this.batchNameinputField.inputValue();
+    return this.batchPrefix;
+  }
+  async enterAlphabetsInBatchNameSuffix(){
+    await this.batchNameSuffix.fill('ADXS');
+  }
+  async getBatchSuffixErrorMessage(){
+    return await this.batchSuffixErrorMessage.textContent();
+  }
+  async enterAlphabetsInBatchNamePrefix(){
+    const filledBatchPrefix = await this.batchNameinputField.inputValue();
+    await this.batchNameinputField.press('A');
+    const enteredBatchPrefix = await this.batchNameinputField.inputValue();
+    console.log('Filled Batch Prefix:', filledBatchPrefix);
+    console.log('Entered Batch Prefix:', enteredBatchPrefix);
+    return filledBatchPrefix === enteredBatchPrefix;
+  }
+  async verifyEmptyBatchPrefix(){
+    const batchPrefixValue = await this.batchNameinputField.inputValue();
+    return batchPrefixValue === '';
+  }
+  async clickstatusRadioButton(){
+    await this.statusRadioButton.click();
+  }
+  async enterMandatoryFields(){
+    await this.verifyProgramDropdownButton();
+    await this.selectProgramNameFromDropdown();
+    const batchSuffix = batchData.mandatoryFieldsData;
+    await this.batchNameSuffix.fill(batchSuffix.batchNameSuffix);
+    await this.clickstatusRadioButton();
+    const noOfClasses = batchData.mandatoryFieldsData;
+    await this.noOfClassesInput.fill(noOfClasses.noOfClasses);
+  }
+  async clickSaveButton(){
+    await this.saveButton.click();
+  }
+  async getBatchSuccessMessage(){
+    return await this.successMessageSummary.innerText();
+  }
+  async verifyWithEmptyMandatoryField(){
+    await this.verifyProgramDropdownButton();
+    await this.selectProgramNameFromDropdown();
+    const batchSuffix = batchData.emptyMandatoryFieldData;
+    await this.batchNameSuffix.fill(batchSuffix.batchNameSuffix);
+    await this.clickstatusRadioButton();
+    const noOfClasses = batchData.emptyMandatoryFieldData;
+    await this.noOfClassesInput.fill(noOfClasses.noOfClasses);
+  }
+  async verifyEmptyNoOfClassesErrorMessage(){
+    return await this.emptyNoOfClassesFieldEmpty.textContent();
+  }
+  async clickCancelButton(){
+    await this.cancelButton.click();
+  }
+  async verifyIsBatchDialogBoxClosed(){
+    return await this.dialogBoxClose.isHidden();
+    //  await this.batchDialogBox.waitFor({ state: 'hidden' });
+  }
+  async clickCloseButton(){
+    await this.closeButton.click();
+  }
+
+  async enterAllFields(){
+    await this.verifyProgramDropdownButton();
+    await this.selectProgramNameFromDropdown();
+    const batchSuffix = batchData.allFieldsData;
+    await this.batchNameSuffix.fill(batchSuffix.batchNameSuffix);
+    const Description = batchData.allFieldsData;
+    await this.descriptionInput.fill(Description.description);
+    await this.clickstatusRadioButton();
+    const noOfClasses = batchData.allFieldsData;
+    await this.noOfClassesInput.fill(noOfClasses.noOfClasses);
+  }
+  async clickEditIcon(){
+    await this.editIconsInRows.nth(6).click();
+  }
+  async verifyBatchNameFieldDisabled(){
+    return await this.batchNameField.isDisabled();
+  }
+  async editWithInvalidData(){
+    const Description = batchData.invalidEditData;
+    await this.descriptionInput.fill(Description.description);
+    const NoOfClasses = batchData.invalidEditData;
+    await this.noOfClassesInput.fill(NoOfClasses.noOfClasses);  
+  }
+  async verifyNoOfClassesWithInvalidData(){
+    const value = await this.noOfClassesInput.inputValue();
+    return value === "";
+  }
+  
+async verifyProgramNameIsSelected() {
+    const currentValue = await this.programNameInput.inputValue();
+
+    if (!currentValue || currentValue.trim() === "") {
+        // await this.verifyProgramDropdownButton();
+        await this.programNameDropdownButton.click();
+        await this.page.locator("//ul[@role='listbox']//li[@role='option']").first().click();
+    }
+}
+
+  async editWithValidData(){
+    await this.verifyProgramNameIsSelected();
+    const Description = batchData.validEditData;
+    await this.descriptionInput.fill(Description.description);
+    await this.clickstatusRadioButton();
+    const NoOfClasses = batchData.validEditData;
+    await this.noOfClassesInput.fill(NoOfClasses.noOfClasses);
+  }
+  async clickDeleteIcon(){
+    await this.deleteIconsInRows.nth(1).click();
+     await this.deleteDialogBox.waitFor({ state: "visible" });
+  }
+  async verifyDeleteConfirmDialogBox(){
+    const isDialogBoxVisible = await this.deleteDialogBox.isVisible();
+    const isYesDeleteButtonVisible = await this.yesDeleteButton.isVisible();
+    const isNoDeleteButtonVisible = await this.noDdeleteButton.isVisible();
+    return{
+      isDialogBoxVisible,
+      isYesDeleteButtonVisible,
+      isNoDeleteButtonVisible
+    };
+  }
+ async clickYesDeleteButton(){
+    this.beforeDeletebatchCount = await this.batchRows.count(); 
+    await this.deleteIconsInRows.nth(2).click();
+    await this.yesDeleteButton.click();
+}
+
+  async clickNoDeleteButton(){
+    this.beforeDeletebatchCount = await this.batchRows.count();
+    await this.deleteIconsInRows.nth(2).click();
+    await this.noDdeleteButton.click();
+  }
+  async verifyIsBatchDeleted(){
+    const afterDeleteBatchCount = await this.batchRows.count();
+    return{
+      beforeDeleteCount : this.beforeDeletebatchCount,
+      afterDeleteBatchCount
+    };
+  }
+  async verifyIsDeleteDialogboxClosed(){
+    return await this.deleteDialogBox.isHidden();
+    await this.deleteDialogBox.waitFor({ state: "hidden" });
+  }
+  async verifyBatchNotDeleted(){
+    const afterDeleteBatchCount = await this.batchRows.count();
+    return{
+      beforeDeleteCount : this.beforeDeletebatchCount,
+      afterDeleteBatchCount
+    };
+  }
+  async clickDeleteDialogBoxCloseIcon(){
+    await this.deleteDialogBoxCloseIcon.click();
+    await this.deleteDialogBox.waitFor({ state: "hidden" });
+  }
+
 }
     

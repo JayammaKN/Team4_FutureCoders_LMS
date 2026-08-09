@@ -2,7 +2,7 @@ Feature: Manage Batch - UI validation
 
 Background: Admin is logged in to LMS Portal
 Given Admin is on login Page
-When Admin clicks login in button after entering  a valid credential
+When Admin clicks login in button after entering  a valid credentials
 
 Scenario: Batch page heading is displayed
 Given Admin is on home page after Login

@@ -5,6 +5,10 @@ import { test } from '../fixture/fixtures.js';
 
 const { Given, When, Then } = createBdd(test);
 
+When('Admin clicks login in button after entering  a valid credentials', async ({loginFixture}) => {
+  await loginFixture.login();
+});
+
 Given('Admin is on home page after Login', async ({batchPage}) => {
   console.log('Admin is on the home page after login');
 });

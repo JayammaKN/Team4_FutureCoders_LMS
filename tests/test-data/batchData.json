@@ -1,0 +1,24 @@
+{
+    "mandatoryFieldsData": {
+        "batchNameSuffix": "0004",
+        "noOfClasses": "5"
+    },
+    "emptyMandatoryFieldData": {
+        "batchNameSuffix": "002",
+        "noOfClasses": " "
+    },
+    "allFieldsData": {
+        "batchNameSuffix": "0002",
+        "description": "Arrays and Loops",
+        "noOfClasses": "7"
+    },
+     "invalidEditData": {
+        "description": "@#$!^&&*",
+        "noOfClasses": "AD"
+    },
+    "validEditData": {
+        "description": "Descrition about Arrays",
+        "noOfClasses": "10"
+    }
+
+}

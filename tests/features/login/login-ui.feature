@@ -49,41 +49,37 @@ Feature: Login UI Verification
     Then Admin should see "Password" in the second text field
 
   Scenario: Asterisk is displayed for user field
-  When Admin enters the Valid LMS app URL
-  Then Admin should see asterisk mark(*) symbol next to text for user field
+    When Admin enters the Valid LMS app URL
+    Then Admin should see asterisk mark(*) symbol next to text for user field
 
   Scenario: Asterisk is displayed for password field
-  When Admin enters the Valid LMS app URL
-  Then Admin should see asterisk mark symbol next to password text
+    When Admin enters the Valid LMS app URL
+    Then Admin should see asterisk mark symbol next to password text
 
-  Scenario: Placeholder presence in dropdown 
-  When Admin enters the Valid LMS app URL
-  Then Admin should see "Select the role" placeholder in dropdown
+  Scenario: Placeholder presence in dropdown
+    When Admin enters the Valid LMS app URL
+    Then Admin should see "Select the role" placeholder in dropdown
 
-Scenario: Dropdown options to select role
-When Admin enters the Valid LMS app URL
-Then Admin should see "Admin", "Staff", "Student" options in dropdown
+  Scenario: Dropdown options to select role
+    When Admin enters the Valid LMS app URL
+    Then Admin should see "Admin", "Staff", "Student" options in dropdown
 
-Scenario: Alignment of the login form
-When Admin enters the Valid LMS app URL
-Then Admin should see login form on the centre of the page
+  Scenario: Alignment of the login form
+    When Admin enters the Valid LMS app URL
+    Then Admin should see login form on the centre of the page
 
-Scenario: Input field label alignment
-When Admin enters the Valid LMS app URL
-Then Username , Password labels and select the role should be left-aligned above their respective input fields
+  Scenario: Input field label alignment
+    When Admin enters the Valid LMS app URL
+    Then Username , Password labels and select the role should be left-aligned above their respective input fields
 
-Scenario: Login button is displayed
-When Admin enters the Valid LMS app URL
-Then Admin should see login button 
+  Scenario: Login button is displayed
+    When Admin enters the Valid LMS app URL
+    Then Admin should see login button
 
-Scenario: User field Placeholder text colour
-When Admin enters the Valid LMS app URL
-Then Admin should see user text in gray color
+  Scenario: User field Placeholder text colour
+    When Admin enters the Valid LMS app URL
+    Then Admin should see user text in gray color
 
-Scenario: Password field Placeholder text colour
-When Admin enters the Valid LMS app URL
-Then Admin should see password text in gray color
-
-
-
-
+  Scenario: Password field Placeholder text colour
+    When Admin enters the Valid LMS app URL
+    Then Admin should see password text in gray color

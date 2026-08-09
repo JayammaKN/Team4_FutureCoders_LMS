@@ -1,71 +1,198 @@
-// Simple Page Object for the Home Page.
-// It only stores the selectors and provides simple helper methods.
-export default class HomePage {
+import logger from '../../utils/logger.js';
+
+export class HomePage {
+
   constructor(page) {
     this.page = page;
 
-    // Selectors
-    this.heading = 'text=LMS - Learning Management System';
-    this.navLinks = 'mat-toolbar button';
-    this.welcomeCard = 'figure:has(strong:has-text("Welcome"))';
-    this.barChart = 'figure:has(canvas)';
-    this.userCountCard = 'User';
-    this.programCountCard = 'Programs';
-    this.staffCountCard = 'Staff';
-    this.batchCountCard = 'Batches';
-    this.staffTable = 'text=Staff Data';
-    this.staffTableHeaders = '[role=grid] [role=columnheader]';
+    this.lmsTitle = page.getByText('LMS - Learning Management System', { exact: true });
+
+    this.homeLink = page.getByText('Home', { exact: true });
+    this.programLink = page.getByText('Program', { exact: true });
+    this.batchLink = page.getByText('Batch', { exact: true });
+    this.logoutLink = page.getByText('Logout', { exact: true });
+    this.navLinks = page.locator('mat-toolbar button');
+
+    this.welcomeMessage = page.locator('figure').filter({ hasText: 'Welcome' });
+    this.barChart = page.locator('figure canvas').first();
+
+    this.userCard = page.getByText('User', { exact: true });
+    this.programCard = page.getByText('Programs', { exact: true });
+    this.staffCard = page.getByText('Staff', { exact: true });
+    this.batchCard = page.getByText('Batches', { exact: true });
+
+    this.staffTable = page.getByRole('grid');
+    this.staffTableHeaders = page.getByRole('columnheader');
   }
 
-  // Reads the LMS heading text and removes extra spaces
   async getTitleText() {
-    const text = await this.page.locator(this.heading).first().textContent();
+    const text = await this.lmsTitle.innerText();
+    logger.info(`Home page title: ${text.trim()}`);
     return text.trim();
   }
 
-  // Reads all navigation bar texts
-  async getNavTexts() {
-    const texts = await this.page.locator(this.navLinks).allTextContents();
-    return texts.map((t) => t.trim()).filter((t) => t !== '');
+  async isTitleTopLeft() {
+    const box = await this.lmsTitle.boundingBox();
+    if (!box) {
+      return false;
+    }
+    return box.x < 500 && box.y < 200;
   }
 
-  // Reads the welcome message
+  async getNavTexts() {
+    const texts = await this.navLinks.allInnerTexts();
+    const cleanTexts = texts.map(text => text.trim()).filter(text => text !== '');
+    logger.info(`Navigation bar texts: ${cleanTexts.join(', ')}`);
+    return cleanTexts;
+  }
+
+  async isNavTopRight() {
+    const box = await this.navLinks.first().boundingBox();
+    const viewport = this.page.viewportSize();
+    if (!box || !viewport) {
+      return false;
+    }
+    return box.y < 100 && box.x > viewport.width / 2;
+  }
+
   async getWelcomeText() {
-    const text = await this.page.locator(this.welcomeCard).first().innerText();
+    const text = await this.welcomeMessage.innerText();
+    logger.info(`Welcome message: ${text.replace(/\s+/g, ' ').trim()}`);
     return text.replace(/\s+/g, ' ').trim();
   }
 
-  // Reads the staff table headers
-  async getStaffHeaders() {
-    const headers = await this.page.locator(this.staffTableHeaders).allTextContents();
-    return headers.map((h) => h.trim()).filter((h) => h !== '');
-  }
-
-  // True when the title is in the top left corner
-  async isTitleTopLeft() {
-    const box = await this.page.locator(this.heading).first().boundingBox();
-    return box !== null && box.x < 50 && box.y < 100;
-  }
-
-  // True when the navigation bar is on the top right side
-  async isNavTopRight() {
-    const box = await this.page.locator(this.navLinks).first().boundingBox();
-    const viewport = this.page.viewportSize();
-    return box !== null && box.y < 100 && box.x > viewport.width / 2;
-  }
-
-  // True when the bar chart is visible
   async isBarChartVisible() {
-    return this.page.locator(this.barChart).first().isVisible();
+    return await this.barChart.isVisible();
   }
 
-  // True when a count card is visible
-  async isCountCardVisible(label) {
-    return this.page.getByText(label, { exact: true }).first().isVisible();
+  async isUserCardVisible() {
+    return await this.userCard.isVisible();
   }
 
-  // True when the staff table is visible
+  async isProgramCardVisible() {
+    return await this.programCard.isVisible();
+  }
+
+  async isStaffCardVisible() {
+    return await this.staffCard.isVisible();
+  }
+
+  async isBatchCardVisible() {
+    return await this.batchCard.isVisible();
+  }
+
   async isStaffTableVisible() {
-    return this.page.locator(this.staffTable).first().isVisible();
+    return await this.staffTable.isVisible();
+  }
+
+  async getStaffHeaders() {
+    const headers = await this.staffTableHeaders.allInnerTexts();
+    return headers.map(header => header.trim());
+  }
+
+  async getBarChartData() {
+    const chartData = await this.page.evaluate(() => {
+      const canvas = document.querySelectorAll('figure canvas')[0];
+      const alreadyChecked = new Set();
+      const chartsFound = [];
+
+      function lookInside(object) {
+        if (!object || typeof object !== 'object') {
+          return;
+        }
+        if (alreadyChecked.has(object)) {
+          return;
+        }
+        alreadyChecked.add(object);
+        if (object.data && object.config && object.canvas) {
+          chartsFound.push(object);
+          return;
+        }
+        const parts = Object.keys(object).slice(0, 200);
+        for (const part of parts) {
+          const partValue = object[part];
+          if (typeof partValue === 'object' && partValue !== null) {
+            lookInside(partValue);
+          }
+        }
+      }
+
+      lookInside(canvas && canvas.__ngContext__);
+
+      let barChartObject = null;
+      for (const chart of chartsFound) {
+        if (chart.config.type === 'bar') {
+          barChartObject = chart;
+          break;
+        }
+      }
+      if (barChartObject === null && chartsFound.length > 0) {
+        barChartObject = chartsFound[0];
+      }
+      if (barChartObject === null) {
+        return null;
+      }
+
+      const datasets = barChartObject.data.datasets || [];
+      if (datasets.length === 0) {
+        return null;
+      }
+
+      const firstDataset = datasets[0];
+      let firstLabel = '';
+      if (typeof firstDataset.label === 'string') {
+        firstLabel = firstDataset.label.trim();
+      }
+      let firstDataIsNumber = false;
+      if (Array.isArray(firstDataset.data) && typeof firstDataset.data[0] === 'number') {
+        firstDataIsNumber = true;
+      }
+      if (firstLabel === '' || firstDataIsNumber === false) {
+        return null;
+      }
+
+      function getNumber(dataset) {
+        if (!dataset) {
+          return 0;
+        }
+        if (!Array.isArray(dataset.data)) {
+          return 0;
+        }
+        const number = dataset.data[0];
+        return typeof number === 'number' ? number : 0;
+      }
+
+      const labels = [];
+      for (const dataset of datasets) {
+        if (dataset && dataset.label) {
+          labels.push(dataset.label);
+        } else {
+          labels.push('');
+        }
+      }
+
+      return {
+        active: getNumber(firstDataset),
+        inactive: getNumber(datasets[1]),
+        datasetCount: datasets.length,
+        labels: labels,
+      };
+    });
+
+    if (chartData !== null) {
+      logger.info(
+        `Bar chart data: Active ${chartData.active}, ` +
+        `Inactive ${chartData.inactive}, Labels: ${chartData.labels.join(', ')}`
+      );
+    }
+
+    return chartData;
+  }
+
+  getCardNumber(label) {
+    const card = this.page.locator('.widget').filter({ hasText: label });
+    const numberLocator = card.locator('.top').first();
+    logger.info(`Reading count number for card: ${label}`);
+    return numberLocator;
   }
 }

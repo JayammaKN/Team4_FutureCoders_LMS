@@ -29,6 +29,9 @@ const logger = {
   navigation(url, status) {
     this.info(`Navigated to ${url} - HTTP ${status}`);
   },
+  logoutSuccess() {
+    this.info('Logout successful - redirected to the login page');
+  },
 };
 
 export default logger;

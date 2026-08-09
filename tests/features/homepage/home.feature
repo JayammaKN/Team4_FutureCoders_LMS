@@ -1,9 +1,7 @@
+@home
 Feature: Home Page
-  As an Admin
-  I want to see the LMS home page elements after logging in
-  So that I can verify the page layout, navigation bar and data
 
-  Background: Admin is on Home Page
+  Background: Admin gives the valid LMS portal URL
     Given Admin is on login Page
     When Admin clicks login in button after entering a valid credential
 

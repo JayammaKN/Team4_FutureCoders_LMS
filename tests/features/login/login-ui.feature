@@ -23,7 +23,6 @@ Feature: Login UI Verification
     When Admin enters the Valid LMS app URL
     Then Admin should see Application Logo
 
-  @skip
   Scenario: Company name is displayed
     When Admin enters the Valid LMS app URL
     Then Admin should see company name below the app name

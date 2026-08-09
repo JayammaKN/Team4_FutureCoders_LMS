@@ -1,3 +1,4 @@
+@LMSEditProgram
 Feature: Edit Program Functional Verification
 
 Background: Admin navigates to program page after logged in

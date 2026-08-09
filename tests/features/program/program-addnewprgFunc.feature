@@ -1,3 +1,4 @@
+@LMSAddNewProgramFunc
 Feature: Add New Program Functional Verification
 
 Background: Admin navigates to program page after logged in

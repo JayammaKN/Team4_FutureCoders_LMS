@@ -1,3 +1,4 @@
+@LMSDeleteProgram
 Feature: Delete Program
 
 Background: Admin navigates to program page after logged in

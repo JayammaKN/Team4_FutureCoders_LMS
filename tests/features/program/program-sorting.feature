@@ -1,3 +1,4 @@
+@LMSSortingFunc
 Feature: Manage Sorting functionality
 
 Background: Admin navigates to program page after logged in

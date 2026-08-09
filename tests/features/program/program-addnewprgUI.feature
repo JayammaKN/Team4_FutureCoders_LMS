@@ -1,3 +1,4 @@
+@LMSAddNewProgramUI
 Feature: Add New Program UI Verification
 
 Background: Admin navigates to program page after logged in

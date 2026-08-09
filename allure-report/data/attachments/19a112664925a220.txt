@@ -1,0 +1,5 @@
+[INFO] 2026-08-08T09:58:34.012Z - Loading page: https://lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com/
+[INFO] 2026-08-08T09:58:34.014Z - Navigated to https://lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com/ - HTTP 200
+[INFO] 2026-08-08T09:58:34.565Z - Login successful for user: Lmshackathon@gmail.com
+Program Name: Nova
+Program Description: Nova Description

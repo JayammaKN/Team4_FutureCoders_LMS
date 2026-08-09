@@ -1,3 +1,4 @@
+@LMSNavigationFunc
 Feature: Program Navigation
 
 Background: Admin is logged in to LMS Portal

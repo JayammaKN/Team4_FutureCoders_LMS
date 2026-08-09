@@ -1,3 +1,4 @@
+@LMSMenubarFunc
 Feature: Menu bar verification in Program page
 
 Background: Admin is logged in to LMS Portal

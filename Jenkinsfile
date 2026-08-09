@@ -44,8 +44,8 @@ pipeline {
                 bat 'npx playwright test --grep "@LMSNavigationFunc" --project=chromium'
             }
         }
-
-            steps {
+        stage('Generate Allure Report') {
+        steps {
                 bat 'npx allure generate allure-results --clean -o allure-report'
             }
         }

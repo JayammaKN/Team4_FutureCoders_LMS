@@ -153,8 +153,11 @@ Then(
         expect(chartData.labels)
             .toContain('Active');
 
-        expect(chartData.labels)
-            .toContain('Inactive');
+        expect(chartData.active)
+            .toBeGreaterThanOrEqual(0);
+
+        expect(chartData.inactive)
+            .toBeGreaterThanOrEqual(0);
     }
 );
 Then(

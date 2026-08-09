@@ -135,28 +135,18 @@ export class HomePage {
       }
 
       const datasets = barChartObject.data.datasets || [];
-      if (datasets.length === 0) {
+      if (datasets.length < 2) {
         return null;
       }
 
-      const firstDataset = datasets[0];
-      let firstLabel = '';
-      if (typeof firstDataset.label === 'string') {
-        firstLabel = firstDataset.label.trim();
-      }
-      let firstDataIsNumber = false;
-      if (Array.isArray(firstDataset.data) && typeof firstDataset.data[0] === 'number') {
-        firstDataIsNumber = true;
-      }
-      if (firstLabel === '' || firstDataIsNumber === false) {
+      const firstLabel = datasets[0] && typeof datasets[0].label === 'string' ? datasets[0].label.trim() : '';
+      const firstNumber = datasets[0] && datasets[0].data ? datasets[0].data[0] : undefined;
+      if (firstLabel === '' || typeof firstNumber !== 'number') {
         return null;
       }
 
       function getNumber(dataset) {
-        if (!dataset) {
-          return 0;
-        }
-        if (!Array.isArray(dataset.data)) {
+        if (!dataset || !Array.isArray(dataset.data)) {
           return 0;
         }
         const number = dataset.data[0];
@@ -165,15 +155,15 @@ export class HomePage {
 
       const labels = [];
       for (const dataset of datasets) {
-        if (dataset && dataset.label) {
-          labels.push(dataset.label);
+        if (dataset && typeof dataset.label === 'string') {
+          labels.push(dataset.label.trim());
         } else {
           labels.push('');
         }
       }
 
       return {
-        active: getNumber(firstDataset),
+        active: getNumber(datasets[0]),
         inactive: getNumber(datasets[1]),
         datasetCount: datasets.length,
         labels: labels,

@@ -1,64 +1,26 @@
 
-
-
-
-
-
-
-.features-gen/
-# Environment
-.env
-.env.*
+# Dependencies
+node_modules/
 
 # Playwright
-node_modules/
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-/playwright/.auth/
-/allure-results/
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+playwright/.auth/
+
+# Allure
+allure-results/
+allure-report/
+
+# Playwright-BDD generated files
+tests/.features-gen/
 
 # Logs
-/logs/
+logs/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Environment variables
+.env
+.env.local
 
 

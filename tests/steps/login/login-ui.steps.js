@@ -1,9 +1,7 @@
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import { test } from '../../fixture/fixtures.js';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const loginData = require('../../test-data/loginData.json');
+import loginData from '../../test-data/loginData.json' with { type: 'json' };
 
 const { Given, When, Then } = createBdd(test);
 
@@ -22,14 +20,15 @@ Then('Admin should land on the login page', async ({ page }) => {
   await expect(page).toHaveURL(/login/);
 });
 
-// 4
-When('Admin enters the invalid LMS app URL', async ({ loginFixture }) => {
-  await loginFixture.openInvalidUrl();
+// 4 - reusable invalid URLs (loaded from loginData.json; any invalid URL should show an error)
+When('Admin enters each invalid LMS app URL', async ({ loginFixture }) => {
+  await loginFixture.openAllInvalidUrls();
 });
 
 // 5
-Then('Admin should receive application error', async ({ loginFixture }) => {
-  await expect(loginFixture.navigationFailed()).toBe(true);
+Then('Admin should receive an application error for every invalid URL', async ({ loginFixture }) => {
+  const failedUrls = await loginFixture.getInvalidUrlFailures();
+  await expect(failedUrls, 'Invalid URLs that did NOT show an error').toEqual([]);
 });
 
 // 6
@@ -44,13 +43,13 @@ Then('Admin should see the application title', async ({ page, loginFixture }) =>
 });
 
 // 8
-Then('Admin should see Application Logo', async ({ page, loginFixture }) => {
-  await expect(page.locator(loginFixture.logo)).toBeVisible();
+Then('Admin should see Application Logo', async ({ loginFixture }) => {
+  await expect(loginFixture.logo).toBeVisible();
 });
 
 // 9
-Then('Admin should see company name below the app name', async ({ page, loginFixture }) => {
-  await expect(page.locator(loginFixture.companyName)).toBeVisible();
+Then('Admin should see company name below the app name', async ({ loginFixture }) => {
+  await expect(loginFixture.companyName).toBeVisible();
 });
 
 // 10
@@ -59,24 +58,24 @@ Then('Admin should see the login message', async ({ page, loginFixture }) => {
 });
 
 // 11
-Then('Admin should see two text field', async ({ page, loginFixture }) => {
-  await expect(page.locator(loginFixture.userField)).toBeVisible();
-  await expect(page.locator(loginFixture.passwordField)).toBeVisible();
+Then('Admin should see two text field', async ({ loginFixture }) => {
+  await expect(loginFixture.userField).toBeVisible();
+  await expect(loginFixture.passwordField).toBeVisible();
 });
 
 // 12
-Then('Admin should see one dropdown', async ({ page, loginFixture }) => {
-  await expect(page.locator(loginFixture.roleDropdown)).toBeVisible();
+Then('Admin should see one dropdown', async ({ loginFixture }) => {
+  await expect(loginFixture.roleDropdown).toBeVisible();
 });
 
 // 13
-Then('Admin should see "User" in the first text field', async ({ page, loginFixture }) => {
-  await expect(page.locator(loginFixture.userField)).toHaveAttribute('data-placeholder', loginData.placeholders.username);
+Then('Admin should see "User" in the first text field', async ({ loginFixture }) => {
+  await expect(loginFixture.userField).toHaveAttribute('data-placeholder', loginData.placeholders.username);
 });
 
 // 14
-Then('Admin should see "Password" in the second text field', async ({ page, loginFixture }) => {
-  await expect(page.locator(loginFixture.passwordField)).toHaveAttribute('data-placeholder', loginData.placeholders.password);
+Then('Admin should see "Password" in the second text field', async ({ loginFixture }) => {
+  await expect(loginFixture.passwordField).toHaveAttribute('data-placeholder', loginData.placeholders.password);
 });
 
 // 15
@@ -90,8 +89,8 @@ Then('Admin should see asterisk mark symbol next to password text', async ({ log
 });
 
 // 17
-Then('Admin should see {string} placeholder in dropdown', async ({ page, loginFixture }, text) => {
-  await expect(page.locator(loginFixture.roleDropdown)).toHaveAttribute('placeholder', text);
+Then('Admin should see {string} placeholder in dropdown', async ({ loginFixture }, text) => {
+  await expect(loginFixture.roleDropdown).toHaveAttribute('placeholder', text);
 });
 
 // 18
@@ -110,8 +109,8 @@ Then('Username , Password labels and select the role should be left-aligned abov
 });
 
 // 21
-Then('Admin should see login button', async ({ page, loginFixture }) => {
-  await expect(page.locator(loginFixture.loginButton)).toBeVisible();
+Then('Admin should see login button', async ({ loginFixture }) => {
+  await expect(loginFixture.loginButton).toBeVisible();
 });
 
 // 22

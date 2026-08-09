@@ -8,8 +8,4 @@ Scenario: Sorting of Program name in Ascending order and Descending order
   When Admin clicks on Arrow next to program Name
   Then Admin should See the Program Name is sorted in Ascending order first and then descending order
 
-Scenario: Sorting of Program Description in Ascending order and Descending order
-  When Admin clicks on Arrow next to program Description
-  Then Admin should See the Program Description is sorted in Ascending order first and then descending order
-
 

@@ -1,8 +1,5 @@
 Feature: Menu bar verification in Program page
 
-#Background:
-#  Given Admin is logged in to LMS Portal
-
 Background: Admin is logged in to LMS Portal
 Given Admin is on login Page
 When Admin clicks login in button after entering a valid credential

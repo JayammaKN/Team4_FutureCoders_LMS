@@ -10,13 +10,11 @@ const programData = require('../../test-data/programData.json');
 const loginData = require('../../test-data/loginData.json');
 const { Given, When, Then } = createBdd(test);
 
-
 Given('Admin successfully logged in to LMS Portal', async ({ loginFixture }) => {
     await loginFixture.openValidUrl();
     //await expect(page).toHaveURL(/login/);
     await loginFixture.login();
 });
-
 
 When('Admin clicks on Add New Program under the Program menu bar', async ({ programFixture  }) => {
   await programFixture.clickAddNewProgram();

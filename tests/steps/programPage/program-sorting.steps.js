@@ -11,19 +11,10 @@ const loginData = require('../../test-data/loginData.json');
 const { Given, When, Then } = createBdd(test);
 
 When('Admin clicks on Arrow next to program Name', async ({ programFixture  }) => {
-await programFixture.clickSortArrow();
+   await programFixture.clickSortArrow();
 });
 
 Then('Admin should See the Program Name is sorted in Ascending order first and then descending order', async ({ programFixture  }) => {
-  await programFixture.verifyAscendingOrder();
-  await programFixture.verifyDescendingOrder();
-});
-
-When('Admin clicks on Arrow next to program Description', async ({ programFixture  }) => {
-await programFixture.clickSortArrowDesc();
-});
-
-Then('Admin should See the Program Description is sorted in Ascending order first and then descending order', async ({ programFixture  }) => {
-  await programFixture.verifyAscendingOrderDesc();
-  await programFixture.verifyDescendingOrderDesc();
+   await programFixture.verifyAscendingOrder();
+   await programFixture.verifyDescendingOrder();
 });

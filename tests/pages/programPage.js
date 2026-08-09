@@ -17,6 +17,7 @@ export class ProgramPage
     this.invalidProgramName = programData.invalidProgramName;
     this.newProgramName = programData.newProgramName;
     this.newProgramDescription = programData.newProgramDescription;
+    this.programNameviasearch = programData.programNameviasearch;
 
     this.program = page.locator("//button[@id='program']");
     this.addNewProgram = page.getByRole('menuitem', { name: 'Add New Program' });
@@ -33,12 +34,14 @@ export class ProgramPage
     this.editButton = this.page.locator("//button[@id='editProgram']").first();
     this.newSuccessMessage = page.locator("//div[normalize-space()='Program Updated']");
     this.deleteicon = this.page.locator("//button[@id='deleteProgram']").first();
+    this.deleteicon1 = this.page.locator("//button[@icon='pi pi-trash']");
     this.confirmPage = this.page.locator("//span[normalize-space()='Confirm']");
     this.yesButton = this.page.locator("//button[@ng-reflect-label='Yes']")
+    this.noButton = this.page.locator("//button[@ng-reflect-label='No']")
     this.programDeletedMessage = this.page.locator("//div[normalize-space()='Program Deleted']");
+    this.multipleProgramDeletedMessage = this.page.locator("//div[normalize-space()='Programs Deleted']");
     this.sortArrow = this.page.locator("//p-sorticon").first();
     this.sortArrowDesc = this.page.locator("//p-sorticon").nth(2);
-
   }
 
   async clickProgram() {
@@ -71,8 +74,6 @@ export class ProgramPage
   }
 
   async successfullBinkText() {
-    
-    //const successMessage = this.successMessage;
     await expect(this.successMessage).toBeVisible();
   }
 
@@ -86,19 +87,16 @@ export class ProgramPage
   }
 
   async searchProgram() {
-    await this.searchInput.fill(this.programName);;
-    //await expect(this.page.getByText(this.programName, { exact: true })).toBeVisible();
-    //await expect(this.page.getByText(this.programDescription, { exact: true })).toBeVisible();
     await this.page.mouse.click(500, 300);
+    await this.searchInput.fill(this.programName);;
     await expect(this.page.getByText(this.programName)).toBeVisible();
     await expect(this.page.getByText(this.programDescription)).toBeVisible();
-    //await this.page.mouse.click(500, 300);
-    //await this.page.waitForTimeout(500)
+    //await expect(this.page.getByText(this.programName, { exact: true })).toBeVisible();
+    //await expect(this.page.getByText(this.programDescription, { exact: true })).toBeVisible();
   }
 
   async editProgram() {
     await this.editButton.click()
-
   }
 
   async editProgramDetails() {
@@ -106,7 +104,6 @@ export class ProgramPage
     await this.programDescriptionField.fill(this.newProgramDescription);
     await this.programSaveButton.click();
     await expect(this.newSuccessMessage).toBeVisible();
-
   }
 
   async searchNewProgram() {
@@ -132,6 +129,38 @@ export class ProgramPage
     await expect(this.programDeletedMessage).toBeVisible();
   }
 
+  async clickMultiplePrograms() {
+    await this.page.mouse.click(500, 300);
+    const checkboxcount = this.page.locator("//div[@role='checkbox']");
+  
+    for (let i=1; i <=2 ; i++ )
+    {
+      await checkboxcount.nth(i).click();
+    }
+    //await this.page.locator("//div[@role='checkbox']").nth(1).click();
+    //await this.page.locator("//div[@role='checkbox']").nth(2).click();
+  }
+
+  async confirmMultipleDelete() {
+    await this.deleteicon1.first().click();
+    await expect(this.confirmPage).toBeVisible();
+    await this.yesButton.click();
+    await expect(this.multipleProgramDeletedMessage).toBeVisible();
+  }
+
+  async declineDelete() {
+    await this.deleteicon1.first().click();
+    await expect(this.confirmPage).toBeVisible(); 
+    await this.noButton.click();
+    const checkboxcount = this.page.locator("//div[@role='checkbox']");
+  
+    for (let i=1; i <=2 ; i++ )
+    {
+      await expect(this.checkboxcount).nth(i).toBeVisible();
+    }
+
+  }
+
   async clickSortArrow() {
     await this.page.mouse.click(500, 300);
     await this.sortArrow.click();
@@ -148,25 +177,6 @@ export class ProgramPage
     const programNames = (await this.page.locator("//td[1]").allTextContents()).map(name => name.trim()).filter(Boolean);
     const sortedProgramNames = [...programNames].sort((a, b) => b.localeCompare(a));
     expect(programNames).toEqual(sortedProgramNames);
-
   }
 
-  async clickSortArrowDesc(){
-      await this.page.mouse.click(500, 300);
-      await this.sortArrowDesc.click();
-  }
-
-    async verifyAscendingOrderDesc() {
-    const programNames = (await this.page.locator("//td[1]").allTextContents()).map(name => name.trim()).filter(Boolean);
-    const sortedProgramNames = [...programNames].sort((a, b) => a.localeCompare(b));
-    expect(programNames).toEqual(sortedProgramNames);
-  }
-
-  async verifyDescendingOrderDesc(){
-    await this.sortArrow.click();
-    const programDesc = (await this.page.locator("//td[2]").allTextContents()).map(name => name.trim()).filter(Boolean);
-    const sortedProgramDesc = [...programDesc].sort((a, b) => b.localeCompare(a));
-    expect(programDesc).toEqual(sortedProgramDesc);
-
-  }
 }

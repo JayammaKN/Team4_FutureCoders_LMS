@@ -11,18 +11,17 @@ const loginData = require('../../test-data/loginData.json');
 const { Given, When, Then } = createBdd(test);
 
 Given('Admin is logged in to LMS Portal', async ({ programFixture  }) => {
-await programFixture.loginApplication();
+   await programFixture.loginApplication();
 });
 
-
 Given('Admin is on home page after Login', async ({ page }) => {
-  await expect(page).toHaveTitle('LMS');
+   await expect(page).toHaveTitle('LMS');
 });
 
 When('Admin clicks "Program" on the navigation bar', async ({ programFixture  }) => {
-  await programFixture.clickProgram();
+   await programFixture.clickProgram();
 });
 
 Then('Admin should be navigated to Program page', async ({ page }) => {
-await expect(page.getByText('Manage Program')).toBeVisible();
+   await expect(page.getByText('Manage Program')).toBeVisible();
 });

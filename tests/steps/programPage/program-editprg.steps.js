@@ -16,7 +16,7 @@ When('Admin searches and selects the newly created Program Name and edits the Pr
 });
 
 Then('Admin should see the Records of the newly created Program details', async ({ programFixture  }) => {
-    await programFixture.editProgramDetails();
+   await programFixture.editProgramDetails();
 });
 
 When('Admin searches with newly updated Program Name', async ({ programFixture  }) => {
@@ -24,5 +24,5 @@ When('Admin searches with newly updated Program Name', async ({ programFixture  
 });
 
 Then('Admin verifies that the details are correctly updated', async ({ programFixture  }) => {
-    await programFixture.verifyUpdatedProgramDetails();
+   await programFixture.verifyUpdatedProgramDetails();
 });

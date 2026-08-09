@@ -63,7 +63,7 @@ pipeline {
                 bat 'if exist test-results rmdir /s /q test-results'
                 bat 'if exist playwright-report rmdir /s /q playwright-report'
                 bat 'mkdir allure-results'
-                bat 'npx playwright test --grep "@LMSNavigationFunc" --project=chromium'
+                bat 'npx playwright test --grep ".features-gen/tests/features/program" --project=chromium'
             }
         }
         stage('Generate Allure Report') {

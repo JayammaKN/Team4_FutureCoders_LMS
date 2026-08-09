@@ -83,3 +83,4 @@ Feature: Login UI Verification
   Scenario: Password field Placeholder text colour
     When Admin enters the Valid LMS app URL
     Then Admin should see password text in gray color
+

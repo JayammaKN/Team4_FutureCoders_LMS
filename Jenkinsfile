@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        LMS_URL = credentials('lms-url')
-        LMS_USERNAME = credentials('lms-username')
-        LMS_PASSWORD = credentials('lms-password')
-        LMS_ROLE = credentials('lms-role')
+        LMS_URL = credentials('LMS_URL')
+        LMS_USERNAME = credentials('LMS_USERNAME')
+        LMS_PASSWORD = credentials('LMS_PASSWORD')
+        LMS_ROLE = credentials('LMS_ROLE')
     }
 
     tools {

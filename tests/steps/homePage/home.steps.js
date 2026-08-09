@@ -7,11 +7,6 @@ import homeData from '../../test-data/homeData.json' with { type: 'json' };
 
 const { Then } = createBdd(test);
 
-
-// =====================================================
-// 1. TITLE OF LMS
-// =====================================================
-
 Then(
     'Admin should see LMS - Learning management system as title',
     async ({ homeFixture }) => {
@@ -23,11 +18,6 @@ Then(
             .toBe(homeData.title);
     }
 );
-
-
-// =====================================================
-// 2. TITLE ALIGNMENT
-// =====================================================
 
 Then(
     'LMS title should be on the top left corner of page',
@@ -41,11 +31,6 @@ Then(
     }
 );
 
-
-// =====================================================
-// 3. NAVIGATION BAR TEXT SPELLING
-// =====================================================
-
 Then(
     'Admin should see correct spelling in navigation bar text',
     async ({ homeFixture }) => {
@@ -57,11 +42,6 @@ Then(
             .toEqual(homeData.navLinks);
     }
 );
-
-
-// =====================================================
-// 4. LMS TITLE SPELLING AND SPACE
-// =====================================================
 
 Then(
     'Admin should see correct spelling and space in LMS title',
@@ -75,11 +55,6 @@ Then(
     }
 );
 
-
-// =====================================================
-// 5. NAVIGATION BAR ALIGNMENT
-// =====================================================
-
 Then(
     'Admin should see the navigation bar text on the top right side',
     async ({ homeFixture }) => {
@@ -91,11 +66,6 @@ Then(
             .toBe(true);
     }
 );
-
-
-// =====================================================
-// 6. HOME IS FIRST
-// =====================================================
 
 Then(
     'Admin should see home in the 1st place',
@@ -109,11 +79,6 @@ Then(
     }
 );
 
-
-// =====================================================
-// 7. PROGRAM IS SECOND
-// =====================================================
-
 Then(
     'Admin should see program in the 2nd place',
     async ({ homeFixture }) => {
@@ -125,11 +90,6 @@ Then(
             .toBe(homeData.navLinks[1]);
     }
 );
-
-
-// =====================================================
-// 8. BATCH IS THIRD
-// =====================================================
 
 Then(
     'Admin should see batch in the 3rd place',
@@ -143,11 +103,6 @@ Then(
     }
 );
 
-
-// =====================================================
-// 9. LOGOUT IS FOURTH
-// =====================================================
-
 Then(
     'Admin should see logout in the 4th place',
     async ({ homeFixture }) => {
@@ -159,11 +114,6 @@ Then(
             .toBe(homeData.navLinks[3]);
     }
 );
-
-
-// =====================================================
-// 10. WELCOME MESSAGE
-// =====================================================
 
 Then(
     'Admin should see welcome message with user name and role',
@@ -211,7 +161,7 @@ Then(
     'Admin should see user count',
     async ({ homeFixture }) => {
         await expect(homeFixture.userCard).toBeVisible();
-        await expect(homeFixture.getCardNumber('User')).toHaveText(/\d+/); //Make sure the User card's number box has some number in it//EX:text like "0", "42", or "1,234" passes; empty text or "N/A" fails
+        await expect(homeFixture.getCardNumber('User')).toHaveText(/\d+/);
     }
 );
 Then(

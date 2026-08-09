@@ -1,6 +1,3 @@
-// LogoutPage - a simple Page Object for the Logout feature.
-// It stores the locators and gives easy to read helper methods
-// that the step definitions call.
 import { createLogger } from '../../utils/logger.js';
 const logger = createLogger('Logout');
 

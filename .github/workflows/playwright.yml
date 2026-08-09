@@ -1,7 +1,7 @@
 name: Playwright BDD Tests
 on:
   push:
-    branches: [ main, master, Jaya_08_05 ]
+    branches: [ main, master]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:

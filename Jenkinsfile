@@ -15,6 +15,14 @@ pipeline {
   }
 
   stages {
+    stage('Clean Old Reports') {
+      steps {
+        // Remove test-results / allure-results / playwright-report / allure-report / logs
+        // so stale results from a previous build never leak into this one
+        osCmd('npm run clean:reports')
+      }
+    }
+
     stage('Install Dependencies') {
       steps {
         osCmd('npm ci')

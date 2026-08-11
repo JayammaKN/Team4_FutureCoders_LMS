@@ -1,4 +1,4 @@
-// Generated from: tests/features/login/login-ui.feature
+// Generated from: tests\features\login\login-ui.feature
 import { test } from "../../../../tests/fixture/fixtures.js";
 
 test.describe('Login UI Verification', () => {
@@ -113,7 +113,7 @@ test.describe('Login UI Verification', () => {
 
 test.use({
   $test: [({}, use) => use(test), { scope: 'test', box: true }],
-  $uri: [({}, use) => use('tests/features/login/login-ui.feature'), { scope: 'test', box: true }],
+  $uri: [({}, use) => use('tests\\features\\login\\login-ui.feature'), { scope: 'test', box: true }],
   $bddFileData: [({}, use) => use(bddFileData), { scope: "test", box: true }],
 });
 

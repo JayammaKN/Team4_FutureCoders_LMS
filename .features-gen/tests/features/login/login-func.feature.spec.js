@@ -1,4 +1,4 @@
-// Generated from: tests/features/login/login-func.feature
+// Generated from: tests\features\login\login-func.feature
 import { test } from "../../../../tests/fixture/fixtures.js";
 
 test.describe('Login Page - Functional Verification', () => {
@@ -58,7 +58,7 @@ test.describe('Login Page - Functional Verification', () => {
 
 test.use({
   $test: [({}, use) => use(test), { scope: 'test', box: true }],
-  $uri: [({}, use) => use('tests/features/login/login-func.feature'), { scope: 'test', box: true }],
+  $uri: [({}, use) => use('tests\\features\\login\\login-func.feature'), { scope: 'test', box: true }],
   $bddFileData: [({}, use) => use(bddFileData), { scope: "test", box: true }],
 });
 

@@ -1,6 +1,6 @@
 {
     "mandatoryFieldsData": {
-        "batchNameSuffix": "0004",
+        "batchNameSuffix": "0056",
         "noOfClasses": "5"
     },
     "emptyMandatoryFieldData": {
@@ -8,7 +8,7 @@
         "noOfClasses": " "
     },
     "allFieldsData": {
-        "batchNameSuffix": "0002",
+        "batchNameSuffix": "0033",
         "description": "Arrays and Loops",
         "noOfClasses": "7"
     },

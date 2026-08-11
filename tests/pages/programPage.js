@@ -3,7 +3,8 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const loginData = require('../test-data/loginData.json');
 const programData = require('../test-data/programData.json');
-import logger from '../../utils/logger.js';
+import { createLogger } from '../../utils/logger.js';
+const logger = createLogger('Program');
 export class ProgramPage
 
 {

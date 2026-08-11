@@ -32,9 +32,9 @@ export const test = base.extend({
 
   batchPage: async ({ page, envFixture}, use) => {
     await use(new BatchPagePO(page, envFixture));
-  }
-  
-   programFixture: async ({ page, envFixture }, use) => {
+  },
+
+  programFixture: async ({ page, envFixture }, use) => {
     await use(new ProgramPage(page, envFixture, test));
   },
 

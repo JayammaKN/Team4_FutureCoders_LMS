@@ -1,4 +1,4 @@
-// Generated from: tests/features/logout/logout.feature
+// Generated from: tests\features\logout\logout.feature
 import { test } from "../../../../tests/fixture/fixtures.js";
 
 test.describe('Validation on Logout button', () => {
@@ -18,7 +18,7 @@ test.describe('Validation on Logout button', () => {
 
 test.use({
   $test: [({}, use) => use(test), { scope: 'test', box: true }],
-  $uri: [({}, use) => use('tests/features/logout/logout.feature'), { scope: 'test', box: true }],
+  $uri: [({}, use) => use('tests\\features\\logout\\logout.feature'), { scope: 'test', box: true }],
   $bddFileData: [({}, use) => use(bddFileData), { scope: "test", box: true }],
 });
 

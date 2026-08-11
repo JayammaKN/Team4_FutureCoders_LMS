@@ -1,4 +1,4 @@
-// Generated from: tests/features/homepage/home.feature
+// Generated from: tests\features\homepage\home.feature
 import { test } from "../../../../tests/fixture/fixtures.js";
 
 test.describe('Home Page', () => {
@@ -82,7 +82,7 @@ test.describe('Home Page', () => {
 
 test.use({
   $test: [({}, use) => use(test), { scope: 'test', box: true }],
-  $uri: [({}, use) => use('tests/features/homepage/home.feature'), { scope: 'test', box: true }],
+  $uri: [({}, use) => use('tests\\features\\homepage\\home.feature'), { scope: 'test', box: true }],
   $bddFileData: [({}, use) => use(bddFileData), { scope: "test", box: true }],
 });
 

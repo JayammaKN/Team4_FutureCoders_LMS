@@ -1,6 +1,9 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const batchData = require('../test-data/batchData.json');
+import { createLogger } from '../../utils/Logger.js';
+const logger = createLogger("BatchPagePO");
+
 export default class BatchPagePO {
 
   constructor(page, env) {
@@ -70,6 +73,7 @@ export default class BatchPagePO {
   }
 
   async clickBatchButton(){
+    logger.info("click batchbutton on navigation bar");
     await this.batchButton.click();
   }
   async verifyManageBatchPageHeading(){
@@ -137,6 +141,7 @@ export default class BatchPagePO {
     return true;
   }
   async clickAddNewBatchButton(){
+    logger.info("clicking add new batch to navigate to add new batch dialog box")
     await this.addNewBatchButton.click();
   }
   async verifyBatchDialogBox(){
@@ -189,6 +194,7 @@ export default class BatchPagePO {
     await this.statusRadioButton.click();
   }
   async enterMandatoryFields(){
+     logger.info("Entering mandatory fields for batch creation");
     await this.verifyProgramDropdownButton();
     await this.selectProgramNameFromDropdown();
     const batchSuffix = batchData.mandatoryFieldsData;
@@ -238,6 +244,7 @@ export default class BatchPagePO {
     await this.noOfClassesInput.fill(noOfClasses.noOfClasses);
   }
   async clickEditIcon(){
+    logger.info("Clicking Edit icon for batch");
     await this.editIconsInRows.nth(6).click();
   }
   async verifyBatchNameFieldDisabled(){
@@ -331,12 +338,14 @@ async verifyProgramNameIsSelected() {
     await this.headerdeleteIcon.click();
   }
   async clickNextPage(){
+     logger.info("Navigating to next page");
     await this.nextPage.click();
   }
   async verifyNextPageEnabled(){
     return await this.nextPage.isEnabled();
   }
   async clickLastPage(){
+    logger.info("Navigating to last page");
     await this.lastPage.click();
   }
   async isOnLastPage() {
@@ -358,6 +367,7 @@ async verifyLastPageState() {
     return lastPage && nextDisabled;
 }
 async clickPreviousPage(){
+   logger.info("Navigating to previous page");
   await this.previousPage.click();
 }
 async verifyPreviousPageDiabled(){
@@ -392,6 +402,7 @@ async verifyLastPageIsEnabled(){
   return await this.lastPage.isEnabled();
 }
 async enterSearchText(searchKey){
+  logger.info(`Searching for batch using key: ${searchKey}`);
   const searchText = batchData.searchBarData[searchKey];
   await this.searchBar.fill(searchText);
 }
@@ -431,6 +442,7 @@ async clickSort(columnKey){
         batchStatus: this.sortBatchStatus,
         batchProgramName: this.sortProgramName
     };
+    logger.info(`Sorting column: ${columnKey}`);
     await sortMap[columnKey].click();
     await this.page.waitForTimeout(500);
   }

@@ -3,6 +3,7 @@ import loginPage from '../pages/loginPage.js';
 import BatchPagePO from '../pages/BatchPagePO.js';
 import { HomePage } from '../pages/homePage.js';
 import logoutPage from '../pages/logoutPage.js';
+import { ProgramPage } from '../pages/programPage.js';
 import { ENV } from '../../config/env.js';
 
 // Load .env (your custom path)
@@ -33,6 +34,10 @@ export const test = base.extend({
     await use(new BatchPagePO(page, envFixture));
   }
   
+   programFixture: async ({ page, envFixture }, use) => {
+    await use(new ProgramPage(page, envFixture, test));
+  },
+
 });
 
 export const expect = base.expect;

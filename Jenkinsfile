@@ -10,7 +10,6 @@ pipeline {
 
     tools {
         nodejs 'NodeJS'
-        jdk 'JDK21'
     }
 
     stages {

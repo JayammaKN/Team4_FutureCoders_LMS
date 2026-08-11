@@ -225,4 +225,12 @@ export default class LoginPage {
       (await aligned(this.roleDropdown))
     );
   }
+
+  // async login(username, password) {
+  //   await this.userInput.fill(this.env.username);
+  //   await this.passwordInput.fill(this.env.password);
+  //   await this.roledropdown.click();
+  //   await this.selectRole.click();
+  //   await this.loginButton.click();
+  // }
 }

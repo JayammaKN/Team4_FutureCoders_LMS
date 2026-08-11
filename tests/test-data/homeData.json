@@ -1,0 +1,6 @@
+{
+  "title": "LMS - Learning Management System",
+  "navLinks": ["Home", "Program", "Batch", "Logout"],
+  "welcome": "Welcome",
+  "staffHeaders": ["#", "First Name", "Last Name", "Phone"]
+}

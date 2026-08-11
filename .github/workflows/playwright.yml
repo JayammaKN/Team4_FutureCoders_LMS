@@ -25,6 +25,11 @@ jobs:
       with:
         node-version: lts/*
         cache: npm
+    - name: Cache Playwright Browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
     - name: Install dependencies
       run: npm ci
     - name: Install Playwright Browsers (Linux)
@@ -42,4 +47,29 @@ jobs:
       with:
         name: playwright-report-${{ matrix.os }}
         path: playwright-report/
+        retention-days: 7
+     # Upload traces only when tests fail
+    - name: Upload Playwright Traces
+      uses: actions/upload-artifact@v5
+      if: failure()
+      with:
+        name: traces-${{ matrix.os }}
+        path: test-results/
+        retention-days: 7
+    # Upload Allure report (if your project generates it)
+    - name: Upload Allure Report
+      uses: actions/upload-artifact@v5
+      if: always()
+      with:
+        name: allure-report-${{ matrix.os }}
+        path: allure-report/
+        retention-days: 7
+
+    # Upload custom logs from your logger.js
+    - name: Upload Logs
+      uses: actions/upload-artifact@v5
+      if: always()
+      with:
+        name: logs-${{ matrix.os }}
+        path: logs/
         retention-days: 7

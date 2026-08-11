@@ -9,11 +9,7 @@ When('Admin clicks login in button after entering  a valid credentials', async (
   await loginFixture.login();
 });
 
-Given('Admin is on home page after Login', async ({batchPage}) => {
-  console.log('Admin is on the home page after login');
-});
-
-When('Admin clicks {string} on the navigation bar', async ({ batchPage }, arg) => {
+When('Admin clicks "Batch" on the navigation bar', async ({ batchPage }) => {
   await batchPage.clickBatchButton();
   await batchPage.closeOverlay();
 });

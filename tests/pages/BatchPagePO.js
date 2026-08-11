@@ -1,7 +1,7 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const batchData = require('../test-data/batchData.json');
-import { createLogger } from '../../utils/Logger.js';
+import { createLogger } from '../../utils/logger.js';
 const logger = createLogger("BatchPagePO");
 
 export default class BatchPagePO {
@@ -9,10 +9,17 @@ export default class BatchPagePO {
   constructor(page, env) {
     this.page = page;
     this.env = env;
+    this._token = null;
+    page.on('request', (req) => {
+      if (!this._token) {
+        const auth = req.headers()['authorization'];
+        if (auth && auth.startsWith('Bearer ')) this._token = auth.slice(7);
+      }
+    });
 
-    this.batchButton = page.locator("//div//button[3][@class='mat-focus-indicator mat-menu-trigger mat-button mat-button-base']");
+    this.batchButton = page.getByRole('button', { name: 'Batch', exact: true });
     this.manageBatchHeading = page.getByText(' Manage Batch');
-    this.addNewBatchSubMenu = page.getByText('Add New Batch');
+    this.addNewBatchSubMenuText = page.getByText('Add New Batch');
     this.overlayer = page.locator('.cdk-overlay-backdrop')
     this.headerdeleteIcon = page.locator("//mat-card-title//span[@class= 'p-button-icon pi pi-trash']/..");
     this.paginationControls = page.locator("//div[@class='p-paginator-bottom p-paginator p-component ng-star-inserted']");
@@ -20,7 +27,7 @@ export default class BatchPagePO {
     this.deleteIconsInRows = page.locator("//button//span[@class='p-button-icon pi pi-trash']");
     this.checkboxInRows = page.locator("//div//span[@class='p-checkbox-icon']");
     this.tableHeaderNames = page.locator("//table//thead//th[position() > 1]");
-    this.headerRowCheckbox = page.locator("//div[@class='p-checkbox-box']");
+    this.headerRowCheckbox = page.locator("p-table thead tr th .p-checkbox-box").first();
     this.sortIconsInHeader = page.locator("//i[@class='p-sortable-column-icon pi pi-fw pi-sort-alt']");
     this.addNewBatchButton = page.getByText('Add New Batch');
     this.batchDialogBox = page.locator("//div[@role='dialog']");
@@ -80,8 +87,8 @@ export default class BatchPagePO {
     const heading = await (this.manageBatchHeading).textContent();
         return heading;
   }
-  async addNewBatchSubMenu(){
-    return await this.addNewBatchSubMenu.textContent();
+  async getAddNewBatchSubMenuText(){
+    return await this.addNewBatchSubMenuText.textContent();
   }
 
   async closeOverlay() {
@@ -142,7 +149,9 @@ export default class BatchPagePO {
   }
   async clickAddNewBatchButton(){
     logger.info("clicking add new batch to navigate to add new batch dialog box")
-    await this.addNewBatchButton.click();
+    await this.openBatchMenuIfClosed();
+    await this.addNewBatchButton.first().click();
+    await this.batchDialogBox.waitFor({ state: 'visible' });
   }
   async verifyBatchDialogBox(){
     return await this.batchDialogBox.isVisible(); 
@@ -163,14 +172,19 @@ export default class BatchPagePO {
     return await this.statusRadioButton.isVisible();
   }
   async verifyProgramDropdownButton(){
-    await this.programNameDropdownButton.click();
+    await this.programNameInput.click();
+    await this.page.waitForTimeout(500);
   }
   async selectProgramNameFromDropdown(){
-    await this.selectProgramName.nth(2).click();
+    await this.programNameInput.type('a');
+    const option = this.selectProgramName.first();
+    await option.waitFor({ state: 'visible' });
+    const selectedText = await option.textContent();
+    await option.click();
+    return selectedText.trim();
   }
   async verifySelectedProgramNameInBatchPrefix(){
-    const batchPrefix = await this.batchNameinputField.inputValue();
-    return this.batchPrefix;
+    return await this.batchNameinputField.inputValue();
   }
   async enterAlphabetsInBatchNameSuffix(){
     await this.batchNameSuffix.fill('ADXS');
@@ -193,12 +207,15 @@ export default class BatchPagePO {
   async clickstatusRadioButton(){
     await this.statusRadioButton.click();
   }
+  _uniqueSuffix(){
+    return String(Math.floor(10000 + Math.random() * 90000));
+  }
   async enterMandatoryFields(){
      logger.info("Entering mandatory fields for batch creation");
     await this.verifyProgramDropdownButton();
     await this.selectProgramNameFromDropdown();
     const batchSuffix = batchData.mandatoryFieldsData;
-    await this.batchNameSuffix.fill(batchSuffix.batchNameSuffix);
+    await this.batchNameSuffix.fill(this._uniqueSuffix());
     await this.clickstatusRadioButton();
     const noOfClasses = batchData.mandatoryFieldsData;
     await this.noOfClassesInput.fill(noOfClasses.noOfClasses);
@@ -236,7 +253,7 @@ export default class BatchPagePO {
     await this.verifyProgramDropdownButton();
     await this.selectProgramNameFromDropdown();
     const batchSuffix = batchData.allFieldsData;
-    await this.batchNameSuffix.fill(batchSuffix.batchNameSuffix);
+    await this.batchNameSuffix.fill(this._uniqueSuffix());
     const Description = batchData.allFieldsData;
     await this.descriptionInput.fill(Description.description);
     await this.clickstatusRadioButton();
@@ -245,7 +262,7 @@ export default class BatchPagePO {
   }
   async clickEditIcon(){
     logger.info("Clicking Edit icon for batch");
-    await this.editIconsInRows.nth(6).click();
+    await this.editIconsInRows.first().click();
   }
   async verifyBatchNameFieldDisabled(){
     return await this.batchNameField.isDisabled();
@@ -265,8 +282,7 @@ async verifyProgramNameIsSelected() {
     const currentValue = await this.programNameInput.inputValue();
 
     if (!currentValue || currentValue.trim() === "") {
-        // await this.verifyProgramDropdownButton();
-        await this.programNameDropdownButton.click();
+        await this.programNameInput.type('a');
         await this.page.locator("//ul[@role='listbox']//li[@role='option']").first().click();
     }
 }
@@ -280,7 +296,7 @@ async verifyProgramNameIsSelected() {
     await this.noOfClassesInput.fill(NoOfClasses.noOfClasses);
   }
   async clickDeleteIcon(){
-    await this.deleteIconsInRows.nth(1).click();
+    await this.deleteIconsInRows.first().click();
      await this.deleteDialogBox.waitFor({ state: "visible" });
   }
   async verifyDeleteConfirmDialogBox(){
@@ -295,13 +311,13 @@ async verifyProgramNameIsSelected() {
   }
  async clickYesDeleteButton(){
     this.beforeDeletebatchCount = await this.batchRows.count(); 
-    await this.deleteIconsInRows.nth(2).click();
+    await this.deleteIconsInRows.first().click();
     await this.yesDeleteButton.click();
 }
 
   async clickNoDeleteButton(){
     this.beforeDeletebatchCount = await this.batchRows.count();
-    await this.deleteIconsInRows.nth(2).click();
+    await this.deleteIconsInRows.first().click();
     await this.noDdeleteButton.click();
   }
   async verifyIsBatchDeleted(){
@@ -328,7 +344,7 @@ async verifyProgramNameIsSelected() {
   }
   async selectMultipleCheckBoxes(count=2){
     for(let i=0; i<count; i++){
-      await this.ckeckbox.nth(i).check();
+      await this.ckeckbox.nth(i).click();
     }
   }
   async verifyHeaderdeleteIconEnabled(){
@@ -401,11 +417,11 @@ async verifyNextPageIsEnabled(){
 async verifyLastPageIsEnabled(){
   return await this.lastPage.isEnabled();
 }
-async enterSearchText(searchKey){
-  logger.info(`Searching for batch using key: ${searchKey}`);
-  const searchText = batchData.searchBarData[searchKey];
-  await this.searchBar.fill(searchText);
-}
+  async enterSearchText(searchKey){
+    logger.info(`Searching for batch using key: ${searchKey}`);
+    const searchText = (this.searchSeed && this.searchSeed[searchKey]) || batchData.searchBarData[searchKey];
+    await this.searchBar.fill(searchText);
+  }
 async getRowCount(){
   return await this.tableRows.count();
 }
@@ -487,6 +503,131 @@ async clickSort(columnKey){
         const nums = values.map(Number);
         const sorted = [...nums].sort((a, b) => b - a);
         return JSON.stringify(nums) === JSON.stringify(sorted);
+    }
+
+    async goToManageBatchPage(){
+      await this.clickBatchButton();
+      await this.page.waitForTimeout(800);
+      await this.closeOverlay();
+      await this.page.waitForTimeout(600);
+    }
+
+    async hasActiveProgram(){
+      if (!this._token) return false;
+      try {
+        return await this.page.evaluate((token) =>
+          fetch('/api/allPrograms', { headers: { authorization: 'Bearer ' + token } })
+            .then(r => (r.ok ? r.json() : null))
+            .then(d => Array.isArray(d) && d.some(p => p.programStatus === 'Active'))
+        , this._token);
+      } catch (e) {
+        return false;
+      }
+    }
+
+    async ensureActiveProgram(){
+      if (await this.hasActiveProgram()) return;
+      logger.info("No active program found, creating one via UI");
+      const names = ['Seedyhappyprog', 'Seedybatchprog', 'Seedyseedprog'];
+      for (const name of names) {
+        await this.page.locator("//button[@id='program']").click();
+        await this.page.waitForTimeout(700);
+        await this.page.getByText('Add New Program').first().click();
+        await this.page.waitForTimeout(800);
+        await this.page.locator("//input[@id='programName']").fill(name);
+        await this.page.locator('div[role=dialog] .p-radiobutton-box').first().click();
+        await this.page.locator('#saveProgram').click();
+        await this.page.waitForTimeout(1500);
+        const toast = await this.page.locator('.p-toast-message-content').first().innerText().catch(() => '');
+        if (toast.includes('Successful')) {
+          this._activeProgram = name;
+          break;
+        }
+        await this.page.getByText('Cancel').last().click().catch(() => {});
+        await this.page.waitForTimeout(400);
+      }
+      await this.goToManageBatchPage();
+    }
+
+    async openBatchMenuIfClosed(){
+      if (!(await this.addNewBatchButton.first().isVisible().catch(() => false))) {
+        await this.clickBatchButton();
+        await this.page.waitForTimeout(700);
+      }
+    }
+
+    async openAddBatchDialog(){
+      await this.openBatchMenuIfClosed();
+      await this.addNewBatchButton.first().click();
+      await this.batchDialogBox.waitFor({ state: 'visible' });
+      await this.page.waitForTimeout(400);
+    }
+
+    async fillAddBatchDialog({ suffix, description, noOfClasses, selectProgram = true }){
+      if (selectProgram) {
+        await this.verifyProgramDropdownButton();
+        await this.selectProgramNameFromDropdown();
+      }
+      await this.batchNameSuffix.fill(suffix);
+      if (description !== undefined && description !== null) {
+        await this.descriptionInput.fill(description);
+      }
+      await this.clickstatusRadioButton();
+      await this.noOfClassesInput.fill(String(noOfClasses));
+    }
+
+    async createBatch({ suffix, description, noOfClasses }){
+      await this.openAddBatchDialog();
+      await this.fillAddBatchDialog({ suffix, description, noOfClasses });
+      await this.clickSaveButton();
+      const toast = this.page.locator('.p-toast-message-content').first();
+      await toast.waitFor({ state: 'visible' });
+      await toast.waitFor({ state: 'hidden' });
+    }
+
+    async captureRowValues(idx){
+      const cells = await this.tableRows.nth(idx).locator('td').allInnerTexts();
+      return {
+        batchName: (cells[1] || '').trim(),
+        batchDescription: (cells[2] || '').trim(),
+        batchStatus: (cells[3] || '').trim(),
+        noOfClasses: (cells[4] || '').trim(),
+        programName: (cells[5] || '').trim()
+      };
+    }
+
+    async findRowIndexBySuffix(suffix){
+      const names = await this.getColumnText(this.batchNameColumn);
+      return names.findIndex(n => n.endsWith('_' + suffix));
+    }
+
+    async ensureSearchSeed(){
+      if (this.searchSeed) return this.searchSeed;
+      await this.ensureActiveProgram();
+      await this.goToManageBatchPage();
+      let idx = await this.findRowIndexBySuffix('0056');
+      if (idx !== -1) {
+        this.searchSeed = await this.captureRowValues(idx);
+        return this.searchSeed;
+      }
+      await this.createBatch({ suffix: '0056', description: 'Arrays and Loops', noOfClasses: '7' });
+      idx = await this.findRowIndexBySuffix('0056');
+      this.searchSeed = await this.captureRowValues(idx === -1 ? 0 : idx);
+      return this.searchSeed;
+    }
+
+    async ensureBatchRowCount(count){
+      await this.ensureActiveProgram();
+      await this.goToManageBatchPage();
+      let rows = await this.tableRows.count();
+      let guard = 0;
+      while (rows < count && guard < 30) {
+        const suffix = this._uniqueSuffix();
+        await this.createBatch({ suffix, description: 'Seed batch', noOfClasses: '5' });
+        rows = await this.tableRows.count();
+        guard++;
+      }
+      return rows;
     }
 
 

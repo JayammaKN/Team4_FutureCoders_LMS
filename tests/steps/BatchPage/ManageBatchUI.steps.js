@@ -22,24 +22,18 @@ Then('Admin should see the pagination controls under the data table', async ({ba
 });
 
 Then('Admin should see the edit icon in each row', async ({batchPage}) => {
-    // const isEditIconsVisible = await batchPage.verifyEditIconsInRows();
-    // expect(isEditIconsVisible).toBe(true);
-    
+    await batchPage.ensureBatchRowCount(2);
     expect(await batchPage.verifyEditIconsInRows()).toBeTruthy();
 
 });
 
 Then('Admin should see the delete icon in each row', async ({batchPage}) => {
-    // const isDeleteIconVisisble = await batchPage.verifydeleteIconsInRows();
-    // expect(isDeleteIconVisisble).toBe(true);
-    
+    await batchPage.ensureBatchRowCount(2);
     expect(await batchPage.verifydeleteIconsInRows()).toBeTruthy();
 });
 
 Then('Admin should see the checkbox in each row', async ({batchPage}) => {
-    // const isCheckboxesVisible = await batchPage.verifyCheckboxesInRows();
-    // expect(isCheckboxesVisible).toBe(true);
-    
+    await batchPage.ensureBatchRowCount(2);
     expect(await batchPage.verifyCheckboxesInRows()).toBeTruthy();
 });
 

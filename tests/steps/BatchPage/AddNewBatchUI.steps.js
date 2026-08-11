@@ -15,10 +15,12 @@ When('Admin logs in by entering a valid credential and clicks batch on the navig
 
 Given('Admin is on the batch page', async ({batchPage}) => {
     logger.info('Admin is on the batch page');
+    await batchPage.ensureSearchSeed();
+    await batchPage.ensureBatchRowCount(2);
 });
 
 When('Admin clicks on {string} under the {string} menu bar in the manage batch page', async ({batchPage}, arg, arg1) => {
-    // logger.info(`Admin clicks submenu: ${submenu} under menu: ${menu}`);
+    logger.info(`Admin clicks submenu: ${arg} under menu: ${arg1}`);
     await batchPage.clickAddNewBatchButton();
 });
 

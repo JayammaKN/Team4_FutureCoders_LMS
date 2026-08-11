@@ -12,7 +12,7 @@ When('Admin enters {string} in the search box', async ({batchPage}, searchKey) =
 });
 
 Then('Admin should see the filtered batch details based on the  {string} in the data table', async ({batchPage}, searchKey) => {
-    const expected = batchData.searchBarData[searchKey];
+    const expected = (batchPage.searchSeed && batchPage.searchSeed[searchKey]) || batchData.searchBarData[searchKey];
      const column = batchPage.getColumn(searchKey);
      const text = await batchPage.getColumnText(column);
      console.log("Expected:", expected);

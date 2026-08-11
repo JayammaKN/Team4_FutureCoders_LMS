@@ -10,10 +10,6 @@ const programData = require('../../test-data/programData.json');
 const loginData = require('../../test-data/loginData.json');
 const { Given, When, Then } = createBdd(test);
 
-Given('Admin is logged in to LMS Portal', async ({ programFixture  }) => {
-  await programFixture.loginApplication();
-});
-
 When('Admin clicks on delete icon for a program', async ({ programFixture  }) => {
   await programFixture.clickDeleteButton();
 });

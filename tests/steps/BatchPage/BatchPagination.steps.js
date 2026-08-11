@@ -5,7 +5,7 @@ import { test } from '../../fixture/fixtures.js';
 const { Given, When, Then } = createBdd(test);
 
 Given('Admin is on batch page with multiple program records', async ({batchPage}) => {
-    console.log("Admin is on manage batchPage with multiple record")
+    await batchPage.ensureBatchRowCount(11);
 });
 
 When('Admin clicks the next page option \\(>) in the pagination control', async ({batchPage}) => {
@@ -17,6 +17,7 @@ Then('Admin should see the Next enabled link', async ({batchPage}) => {
 });
 
 Given('Admin is on batch page except the last page of Program table', async ({batchPage}) => {
+    await batchPage.ensureBatchRowCount(11);
     if (await batchPage.verifyNextPageDiabled()) {
         await batchPage.clickPreviousPage();
     }
@@ -32,6 +33,7 @@ Then('Admin should see the last page link with next page link disabled on the ta
 });
 
 Given('Admin is on the batch table on any page except the first page', async ({batchPage}) => {
+    await batchPage.ensureBatchRowCount(11);
     if (await batchPage.verifyPreviousPageDiabled()) {
         await batchPage.clickNextPage();
     }
@@ -48,6 +50,7 @@ Then('Admin should see the previous page on the table', async ({batchPage}) => {
 });
 
 Given('Admin is on any page except the first page of batch table', async ({batchPage}) => {
+    await batchPage.ensureBatchRowCount(11);
     if (await batchPage.verifyPreviousPageDiabled()) {
         await batchPage.clickNextPage();
     }
@@ -63,7 +66,7 @@ Then('Admin should see the very first page on the data table', async ({batchPage
 });
 
 Given('Admin is on the batch page with multiple pages of batch record', async ({batchPage}) => {
-    console.log("Admin is on manage batchPage with multiple record")
+    await batchPage.ensureBatchRowCount(11);
 });
 
 When('Admin clicks first page link on the data table', async ({batchPage}) => {

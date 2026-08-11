@@ -15,12 +15,11 @@ allure-report/
 
 # Playwright-BDD generated files
 tests/.features-gen/
+.features-gen/
 
 # Logs
-logs/
+/logs/
 
 # Environment variables
 .env
 .env.local
-
-

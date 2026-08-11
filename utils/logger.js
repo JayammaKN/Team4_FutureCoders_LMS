@@ -1,35 +1,28 @@
-import winston from 'winston';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { appendFileSync, mkdirSync } from 'node:fs';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const logDir = path.join(__dirname, '..', 'logs');
+function timestamp() {
+  return new Date().toISOString();
+}
 
-const customFormat = winston.format.combine(
-  winston.format.timestamp(),
-  winston.format.printf(({ level, message, timestamp }) =>
-    `[${level.toUpperCase()}] ${timestamp} - ${message}`
-  )
-);
+mkdirSync('logs', { recursive: true });
 
-const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'debug',
-  format: customFormat,
-  transports: [
-    new winston.transports.Console({
-      format: winston.format.combine(winston.format.colorize(), customFormat),
-    }),
-    new winston.transports.File({
-      filename: path.join(logDir, 'app.log'),
-      maxsize: 5_000_000,
-      maxFiles: 5,
-      tailable: true,
-    }),
-  ],
-});
+function write(module, level, message) {
+  const line = `[${level.toUpperCase()}] ${timestamp()} [${module}] - ${message}`;
+  if (level === 'error') console.error(line);
+  else if (level === 'warn') console.warn(line);
+  else console.log(line);
+  appendFileSync('logs/test.log', line + '\n');
+}
 
-logger.loginSuccess = (username) => logger.info(`Login successful for user: ${username}`);
-logger.loginFailed = (username, reason) => logger.error(`Login failed for user: ${username} - Reason: ${reason}`);
-logger.navigation = (url, status) => logger.info(`Navigated to ${url} - HTTP ${status}`);
-
-export default logger;
+export function createLogger(module) {
+  return {
+    info: (message) => write(module, 'info', message),
+    warn: (message) => write(module, 'warn', message),
+    error: (message) => write(module, 'error', message),
+    debug: (message) => write(module, 'debug', message),
+    navigation: (url, status) => write(module, 'info', `Navigated to ${url} - HTTP ${status}`),
+    loginSuccess: (username) => write(module, 'info', `Login successful for user: ${username}`),
+    loginFailed: (username, reason) => write(module, 'error', `Login failed for user: ${username} - Reason: ${reason}`),
+    logoutSuccess: () => write(module, 'info', 'Logout successful - redirected to the login page'),
+  };
+}

@@ -5,8 +5,14 @@
     "username": "User",
     "password": "Password"
   },
-  "specialCharUsername": "!#$!",
-  "wrongPassword": "False@1234",
+  "specialCharUsername": ["!#$!", "LMS@123", "LMSAdmin", "Evelyn@aug05"],
+  "wrongPassword": ["False@1234", "aaaaa@#1546", "LMS@aug05", "LMSAdmin@123"],
+  "wrongRole": ["Staff", "Student"],
+  "invalidUrls": [
+    "https://invalid.lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com/",
+    "https://invalid-test-domain-xyz123.invalid/",
+    "https://example.com/"
+  ],
   "errorMessages": {
     "invalidCredentials": "Invalid username and password Please try again",
     "inactiveUser": "Inactive User : Please contact Admin for assistance",
@@ -15,4 +21,5 @@
     "noRole": "Please select your Role",
     "wrongRole": "Please select correct role"
   }
+  
 }

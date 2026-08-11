@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "description": "Phase2- LMS-UI- Automation",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "bddgen": "bddgen",
+    "clean:reports": "node -e \"require('fs').rmSync('playwright-report', {recursive:true, force:true}); require('fs').rmSync('allure-results', {recursive:true, force:true}); require('fs').rmSync('allure-report', {recursive:true, force:true}); require('fs').rmSync('test-results', {recursive:true, force:true}); require('fs').rmSync('logs', {recursive:true, force:true})\"",
+    "test": "playwright test",
+    "test:allure": "npm run clean:reports && npm run bddgen && playwright test",
+    "report:allure": "allure generate allure-results --clean -o allure-report",
+    "open:allure": "allure open allure-report"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JayammaKN/Team4_FutureCoders_LMS.git"

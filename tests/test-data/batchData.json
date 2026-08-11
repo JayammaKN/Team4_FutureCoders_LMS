@@ -1,0 +1,32 @@
+{
+    "mandatoryFieldsData": {
+        "batchNameSuffix": "0056",
+        "noOfClasses": "5"
+    },
+    "emptyMandatoryFieldData": {
+        "batchNameSuffix": "002",
+        "noOfClasses": " "
+    },
+    "allFieldsData": {
+        "batchNameSuffix": "0033",
+        "description": "Arrays and Loops",
+        "noOfClasses": "7"
+    },
+     "invalidEditData": {
+        "description": "@#$!^&&*",
+        "noOfClasses": "AD"
+    },
+    "validEditData": {
+        "description": "Descrition about Arrays",
+        "noOfClasses": "10"
+    },
+    "searchBarData": {
+        "batchName": "JavaCourse",
+        "batchDescription": "Java Coding",
+        "programName": "Playwright",
+        "noOfClasses": "2",
+        "nonexistingBatch": "ASDC",
+        "batchStatus": "Active"
+    }
+
+}

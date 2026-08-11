@@ -1,18 +1,17 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const loginData = require('../test-data/loginData.json');
-import logger from '../../utils/logger.js';
+import loginData from '../test-data/loginData.json' with { type: 'json' };
+import { createLogger } from '../../utils/logger.js';
+const logger = createLogger('Login');
 
-export default class newPage {
+export default class LoginPage {
 
   constructor(page, env, test) {
     this.page = page;
     this.env = env;
     this.test = test;
 
-    this.title = loginData.title;
-    this.loginMessage = loginData.loginMessage;
-
+    // Every login attempt is saved here (with the error messages),
+    // so the test steps can check them later.
+    this.attempts = [];
     this.companyName = this.page.locator('img[src*="LMS-logo"]');
     this.logo = this.page.locator('img[src*="LMS-logo"]');
     this.userField = this.page.getByLabel('User');
@@ -20,15 +19,6 @@ export default class newPage {
     this.roleDropdown = this.page.getByRole('combobox', { name: 'Select the role' });
     this.loginButton = this.page.getByRole('button', { name: 'Login' });
     this.logoutButton = this.page.getByRole('button', { name: 'Logout' });
-    this.homeButton = this.page.getByRole('button', { name: 'Home' });
-    this.programButton = this.page.getByRole('button', { name: 'Program' });
-    this.batchButton = this.page.getByRole('button', { name: 'Batch' });
-
-    this.userFieldById = this.page.locator('#username');
-    this.passwordFieldById = this.page.locator('#password');
-    this.roleDropdownById = this.page.locator('mat-select');
-    this.loginButtonById = this.page.locator('#login');
-    this.logoutButtonById = this.page.locator('#logout');
   }
 
   async openValidUrl() {
@@ -38,15 +28,49 @@ export default class newPage {
     });
   }
 
-  async openInvalidUrl() {
-    await this.test.step(`Try opening invalid URL: ${this.env.invalidUrl}`, async () => {
+  async openInvalidUrl(url) {
+    await this.test.step(`Try opening invalid URL: ${url}`, async () => {
       this.lastStatus = null;
       this.failedToNavigate = false;
-      await this.page.goto(this.env.invalidUrl).catch(() => {
+      try {
+        const response = await this.page.goto(url, { timeout: 15000 });
+        this.lastStatus = response ? response.status() : 0;
+      } catch (err) {
         this.failedToNavigate = true;
-      });
-      logger.warn(`Navigation to invalid URL failed: ${this.env.invalidUrl}`);
+        this.lastStatus = 0;
+        logger.warn(`Navigation to invalid URL failed: ${url}`);
+      }
     });
+  }
+
+  async invalidUrlShowsError() {
+    return (
+      this.failedToNavigate === true ||
+      this.lastStatus === 0 ||
+      this.lastStatus >= 400 ||
+      !(await this.isLoginPageLoaded())
+    );
+  }
+
+  async isLoginPageLoaded() {
+    return this.loginButton.isVisible().catch(() => false);
+  }
+
+  async openAllInvalidUrls() {
+    this.invalidUrlResults = [];
+    for (const url of loginData.invalidUrls) {
+      await this.openInvalidUrl(url);
+      this.invalidUrlResults.push({
+        url,
+        showsError: await this.invalidUrlShowsError(),
+      });
+    }
+  }
+
+  async getInvalidUrlFailures() {
+    return this.invalidUrlResults
+      .filter((result) => !result.showsError)
+      .map((result) => result.url);
   }
 
   async captureStatus(url) {
@@ -64,10 +88,6 @@ export default class newPage {
     return this.lastStatus;
   }
 
-  navigationFailed() {
-    return this.failedToNavigate === true;
-  }
-
   async login({ username = this.env.username, password = this.env.password, role = this.env.role } = {}) {
     await this.test.step(`Login as ${username || this.env.username}`, async () => {
       if (username) await this.userField.fill(username);
@@ -82,32 +102,39 @@ export default class newPage {
       } else {
         const errors = await this.getErrorMessages();
         logger.loginFailed(username || this.env.username, errors.join(' | ') || 'unknown');
+        this.attempts.push({ username, password, role, errors });
       }
     });
   }
 
   async loginWithKeyboard() {
     await this.test.step('Login using keyboard only', async () => {
-      await this.page.locator(this.userField).pressSequentially(this.env.username);
-      await this.page.locator(this.passwordField).pressSequentially(this.env.password);
-      await this.page.locator(this.roleDropdown).press('Enter');
+      await this.userField.pressSequentially(this.env.username);
+      await this.passwordField.pressSequentially(this.env.password);
+      await this.roleDropdown.press('Enter');
       await this.page.keyboard.press('Enter');
       await this.page.keyboard.press('Escape');
-      await this.page.locator(this.loginButton).press('Enter');
+      await this.loginButton.press('Enter');
       await this.waitForLoginResult();
       if (await this.isHomePage()) {
         logger.loginSuccess(this.env.username);
       } else {
         const errors = await this.getErrorMessages();
         logger.loginFailed(this.env.username, errors.join(' | ') || 'unknown');
+        this.attempts.push({
+          username: this.env.username,
+          password: this.env.password,
+          role: this.env.role,
+          errors,
+        });
       }
     });
   }
 
   async waitForLoginResult() {
     await Promise.race([
-      this.page.locator('text=Logout').waitFor({ timeout: 15000 }).catch(() => {}),
-      this.page.locator('mat-error').first().waitFor({ timeout: 15000 }).catch(() => {}),
+      this.logoutButton.waitFor({ timeout: 15000 }).catch(() => {}),
+      this.page.getByRole('alert').first().waitFor({ timeout: 15000 }).catch(() => {}),
     ]);
   }
 
@@ -121,16 +148,12 @@ export default class newPage {
     }
   }
 
-  getError(message) {
-    return this.page.locator('mat-error', { hasText: message.trim() });
-  }
-
   async getErrorMessages() {
-    return (await this.page.locator('mat-error').allTextContents()).map((t) => t.trim());
+    return (await this.page.getByRole('alert').allTextContents()).map((t) => t.trim());
   }
 
   async isHomePage() {
-    return this.page.locator('text=Logout').first().isVisible().catch(() => false);
+    return this.logoutButton.first().isVisible().catch(() => false);
   }
 
   getTitle() {
@@ -141,35 +164,31 @@ export default class newPage {
     return loginData.loginMessage;
   }
 
-  requiredMarkerFor(id) {
-    return this.page
-      .locator('mat-form-field', { has: this.page.locator(id) })
-      .locator('.mat-form-field-required-marker');
+  requiredMarkerFor(field) {
+    return this.page.locator('mat-form-field', { has: field }).locator('.mat-form-field-required-marker');
   }
 
-  getPlaceholderLabel(id) {
-    return this.page
-      .locator('mat-form-field', { has: this.page.locator(id) })
-      .locator('.mat-form-field-label');
+  getPlaceholderLabel(field) {
+    return this.page.locator('mat-form-field', { has: field }).locator('.mat-form-field-label');
   }
 
   async getDropdownOptions() {
-    await this.page.locator(this.roleDropdown).click();
-    const texts = await this.page.locator('mat-option').allTextContents();
+    await this.roleDropdown.click();
+    const texts = await this.page.getByRole('option').allTextContents();
     await this.page.keyboard.press('Escape');
     return texts.map((t) => t.trim());
   }
 
   async isLoginFormCentered() {
-    const box = await this.page.locator('form').boundingBox();
+    const box = await this.page.locator('form').first().boundingBox();
     const viewport = this.page.viewportSize();
     return Math.abs(box.x + box.width / 2 - viewport.width / 2) < 2;
   }
 
   async areLabelsLeftAligned() {
-    const aligned = async (id) => {
-      const fieldBox = await this.page.locator(id).boundingBox();
-      const labelBox = await this.getPlaceholderLabel(id).boundingBox();
+    const aligned = async (field) => {
+      const fieldBox = await field.boundingBox();
+      const labelBox = await this.getPlaceholderLabel(field).boundingBox();
       return Math.abs(fieldBox.x - labelBox.x) < 2;
     };
     return (

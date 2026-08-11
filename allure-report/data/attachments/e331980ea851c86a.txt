@@ -1,0 +1,4 @@
+[INFO] 2026-08-09T22:19:50.740Z - Loading page: https://lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com/
+[INFO] 2026-08-09T22:19:50.740Z - Navigated to https://lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com/ - HTTP 200
+[INFO] 2026-08-09T22:19:51.477Z - Login successful for user: Lmshackathon@gmail.com
+Invalid Program Name: 123Nova

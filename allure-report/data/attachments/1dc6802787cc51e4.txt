@@ -1,5 +1,0 @@
-[INFO] 2026-08-08T19:46:59.322Z - Loading page: https://lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com/
-[INFO] 2026-08-08T19:46:59.324Z - Navigated to https://lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com/ - HTTP 200
-[INFO] 2026-08-08T19:46:59.959Z - Login successful for user: Lmshackathon@gmail.com
-[]
-[]

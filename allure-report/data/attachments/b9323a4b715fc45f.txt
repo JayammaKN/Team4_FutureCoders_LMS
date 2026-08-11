@@ -1,5 +1,0 @@
-[INFO] 2026-08-08T13:29:56.707Z - Loading page: https://lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com/
-[INFO] 2026-08-08T13:29:56.709Z - Navigated to https://lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com/ - HTTP 200
-[INFO] 2026-08-08T13:29:57.544Z - Login successful for user: Lmshackathon@gmail.com
-Program Name: happylo
-Program Description: Nova Description

@@ -1,5 +1,0 @@
-{
-  validUrl: 'https://lms-frontend-hackathon-6dcccb9dd0fa.herokuapp.com/',
-  username: undefined,
-  role: undefined
-}

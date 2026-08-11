@@ -18,7 +18,6 @@ export class ProgramPage
     this.newProgramName = programData.newProgramName;
     this.newProgramDescription = programData.newProgramDescription;
     this.programNameviasearch = programData.programNameviasearch;
-
     this.program = page.locator("//button[@id='program']");
     this.addNewProgram = page.getByRole('menuitem', { name: 'Add New Program' });
     this.saveButton = page.locator("//button[@id='saveProgram']");
@@ -42,6 +41,10 @@ export class ProgramPage
     this.multipleProgramDeletedMessage = this.page.locator("//div[normalize-space()='Programs Deleted']");
     this.sortArrow = this.page.locator("//p-sorticon").first();
     this.sortArrowDesc = this.page.locator("//p-sorticon").nth(2);
+    this.clickNext = this.page.locator("//span[contains(@class,'pi-angle-right')]");
+    this.clickLast = this.page.locator("//span[contains(@class,'pi-angle-double-right')]");
+    this.clickPrevious = this.page.locator("//span[contains(@class,'pi-angle-left')]");
+    this.clickFirst = this.page.locator("//span[contains(@class,'pi-angle-double-left')]");
   }
 
   async clickProgram() {
@@ -177,6 +180,43 @@ export class ProgramPage
     const programNames = (await this.page.locator("//td[1]").allTextContents()).map(name => name.trim()).filter(Boolean);
     const sortedProgramNames = [...programNames].sort((a, b) => b.localeCompare(a));
     expect(programNames).toEqual(sortedProgramNames);
+  }
+
+  async clickNextPage() { 
+    await this.page.mouse.click(500, 300); 
+    await this.clickNext.click(); 
+  } 
+  async verifyNextPage() {  
+    await expect(this.page.getByRole('button', { name: '2', exact: true })).toHaveClass(/p-highlight/);
+  }
+
+  async clickLastPage() { 
+    await this.page.mouse.click(500, 300); 
+    await this.clickLast.click(); 
+  } 
+
+  async verifyLastPage() { 
+    await expect(this.clickLast).toBeDisabled();
+  }
+
+  async clickPreviousPage() { 
+    await this.page.mouse.click(500, 300); 
+    await this.clickLast.click(); 
+    await this.clickPrevious.click();
+  }
+
+  async verifyPreviousPage() { 
+    await expect(this.clickPrevious).toBeEnabled();
+  }
+
+  async clickFirstPage() { 
+    await this.page.mouse.click(500, 300); 
+    await this.clickLast.click(); 
+    await this.clickFirst.click();
+  }
+
+  async verifyFirstPage() { 
+    await expect(this.clickFirst).toBeDisabled();
   }
 
 }

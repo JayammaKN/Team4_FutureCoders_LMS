@@ -1,1 +1,0 @@
-Pagination text: Showing 1 to 10 of 12 entries

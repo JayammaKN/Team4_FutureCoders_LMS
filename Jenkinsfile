@@ -22,52 +22,52 @@ pipeline {
 
         stage('Verify Versions') {
             steps {
-                bat 'node -v'
-                bat 'npm -v'
-                bat 'java -version'
+                sh 'node -v'
+                sh 'npm -v'
+                sh 'java -version'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat 'npm ci'
+                sh 'npm ci'
             }
         }
 
         stage('Verify Environment') {
             steps {
-        bat 'if defined LMS_URL (echo LMS_URL is set) else (echo LMS_URL is NOT set)'
-        bat 'if defined LMS_USERNAME (echo LMS_USERNAME is set) else (echo LMS_USERNAME is NOT set)'
-        bat 'if defined LMS_PASSWORD (echo LMS_PASSWORD is set) else (echo LMS_PASSWORD is NOT set)'
-        bat 'if defined LMS_ROLE (echo LMS_ROLE is set) else (echo LMS_ROLE is NOT set)'
+                sh 'if [ -n "$LMS_URL" ]; then echo "LMS_URL is set"; else echo "LMS_URL is NOT set"; fi'
+                sh 'if [ -n "$LMS_USERNAME" ]; then echo "LMS_USERNAME is set"; else echo "LMS_USERNAME is NOT set"; fi'
+                sh 'if [ -n "$LMS_PASSWORD" ]; then echo "LMS_PASSWORD is set"; else echo "LMS_PASSWORD is NOT set"; fi'
+                sh 'if [ -n "$LMS_ROLE" ]; then echo "LMS_ROLE is set"; else echo "LMS_ROLE is NOT set"; fi'
             }
         }
 
         stage('Generate BDD Tests') {
             steps {
-                bat 'npx bddgen'
+                sh 'npx bddgen'
             }
         }
 
         stage('Install Playwright Browsers') {
             steps {
-                bat 'npx playwright install'
+                sh 'npx playwright install'
             }
         }
 
         stage('Run Playwright Tests') {
             steps {
-                bat 'if exist allure-results rmdir /s /q allure-results'
-                bat 'if exist allure-report rmdir /s /q allure-report'
-                bat 'if exist test-results rmdir /s /q test-results'
-                bat 'if exist playwright-report rmdir /s /q playwright-report'
-                bat 'mkdir allure-results'
-                bat 'npx playwright test --grep ".features-gen/tests/features/program" --project=chromium'
+                sh 'rm -rf allure-results'
+                sh 'rm -rf allure-report'
+                sh 'rm -rf test-results'
+                sh 'rm -rf playwright-report'
+                sh 'mkdir -p allure-results'
+                sh 'npx playwright test --grep ".features-gen/tests/features/program" --project=chromium'
             }
         }
         stage('Generate Allure Report') {
-        steps {
-                bat 'npx allure-commandline generate allure-results --clean -o allure-report'
+            steps {
+                sh 'npx allure-commandline generate allure-results --clean -o allure-report'
             }
         }
     }

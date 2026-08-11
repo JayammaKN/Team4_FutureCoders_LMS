@@ -30,7 +30,7 @@ def checkEnv(String varName) {
     if (isWindows()) {
         bat "if defined ${varName} (echo ${varName} is set) else (echo ${varName} is NOT set)"
     } else {
-        sh "if [ -n \"$${varName}\" ]; then echo \"${varName} is set\"; else echo \"${varName} is NOT set\"; fi"
+        sh "if [ -n \"\$${varName}\" ]; then echo \"${varName} is set\"; else echo \"${varName} is NOT set\"; fi"
     }
 }
 

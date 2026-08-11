@@ -9,9 +9,9 @@ export default class LoginPage {
     this.env = env;
     this.test = test;
 
-    this.title = loginData.title;
-    this.loginMessage = loginData.loginMessage;
-
+    // Every login attempt is saved here (with the error messages),
+    // so the test steps can check them later.
+    this.attempts = [];
     this.companyName = this.page.locator('img[src*="LMS-logo"]');
     this.logo = this.page.locator('img[src*="LMS-logo"]');
     this.userField = this.page.getByLabel('User');
@@ -19,17 +19,6 @@ export default class LoginPage {
     this.roleDropdown = this.page.getByRole('combobox', { name: 'Select the role' });
     this.loginButton = this.page.getByRole('button', { name: 'Login' });
     this.logoutButton = this.page.getByRole('button', { name: 'Logout' });
-    this.homeButton = this.page.getByRole('button', { name: 'Home' });
-    this.programButton = this.page.getByRole('button', { name: 'Program' });
-    this.batchButton = this.page.getByRole('button', { name: 'Batch' });
-
-    this.userFieldById = this.page.locator('#username');
-    this.passwordFieldById = this.page.locator('#password');
-    this.roleDropdownById = this.page.locator('mat-select');
-    this.loginButtonById = this.page.locator('#login');
-    this.logoutButtonById = this.page.locator('#logout');
-
-    this.attempts = [];
   }
 
   async openValidUrl() {
@@ -99,10 +88,6 @@ export default class LoginPage {
     return this.lastStatus;
   }
 
-  navigationFailed() {
-    return this.failedToNavigate === true;
-  }
-
   async login({ username = this.env.username, password = this.env.password, role = this.env.role } = {}) {
     await this.test.step(`Login as ${username || this.env.username}`, async () => {
       if (username) await this.userField.fill(username);
@@ -112,16 +97,13 @@ export default class LoginPage {
       }
       await this.loginButton.click();
       await this.waitForLoginResult();
-
-      let errors = [];
       if (await this.isHomePage()) {
         logger.loginSuccess(username || this.env.username);
       } else {
-        errors = await this.getErrorMessages();
+        const errors = await this.getErrorMessages();
         logger.loginFailed(username || this.env.username, errors.join(' | ') || 'unknown');
+        this.attempts.push({ username, password, role, errors });
       }
-
-      this.attempts.push({ username, password, role, errors });
     });
   }
 
@@ -134,16 +116,18 @@ export default class LoginPage {
       await this.page.keyboard.press('Escape');
       await this.loginButton.press('Enter');
       await this.waitForLoginResult();
-
-      let errors = [];
       if (await this.isHomePage()) {
         logger.loginSuccess(this.env.username);
       } else {
-        errors = await this.getErrorMessages();
+        const errors = await this.getErrorMessages();
         logger.loginFailed(this.env.username, errors.join(' | ') || 'unknown');
+        this.attempts.push({
+          username: this.env.username,
+          password: this.env.password,
+          role: this.env.role,
+          errors,
+        });
       }
-
-      this.attempts.push({ username: this.env.username, password: this.env.password, role: this.env.role, errors });
     });
   }
 
@@ -164,16 +148,12 @@ export default class LoginPage {
     }
   }
 
-  async isHomePage() {
-    return this.logoutButton.first().isVisible().catch(() => false);
-  }
-
-  getError(message) {
-    return this.page.getByRole('alert').filter({ hasText: message.trim() });
-  }
-
   async getErrorMessages() {
     return (await this.page.getByRole('alert').allTextContents()).map((t) => t.trim());
+  }
+
+  async isHomePage() {
+    return this.logoutButton.first().isVisible().catch(() => false);
   }
 
   getTitle() {
@@ -184,20 +164,12 @@ export default class LoginPage {
     return loginData.loginMessage;
   }
 
-  async getPageTitle() {
-    return this.page.title();
-  }
-
   requiredMarkerFor(field) {
-    return this.page
-      .locator('mat-form-field', { has: field })
-      .locator('.mat-form-field-required-marker');
+    return this.page.locator('mat-form-field', { has: field }).locator('.mat-form-field-required-marker');
   }
 
   getPlaceholderLabel(field) {
-    return this.page
-      .locator('mat-form-field', { has: field })
-      .locator('.mat-form-field-label');
+    return this.page.locator('mat-form-field', { has: field }).locator('.mat-form-field-label');
   }
 
   async getDropdownOptions() {
@@ -225,12 +197,4 @@ export default class LoginPage {
       (await aligned(this.roleDropdown))
     );
   }
-
-  // async login(username, password) {
-  //   await this.userInput.fill(this.env.username);
-  //   await this.passwordInput.fill(this.env.password);
-  //   await this.roledropdown.click();
-  //   await this.selectRole.click();
-  //   await this.loginButton.click();
-  // }
 }

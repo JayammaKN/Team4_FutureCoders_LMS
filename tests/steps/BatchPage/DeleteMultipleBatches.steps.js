@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import { test } from '../../fixture/fixtures.js';
 
-
 const { Given, When, Then } = createBdd(test);
 
 When('Admin selects more than one batch by clicking on the checkbox', async ({batchPage}) => {

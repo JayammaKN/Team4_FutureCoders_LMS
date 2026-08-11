@@ -1,12 +1,17 @@
+import { appendFileSync, mkdirSync } from 'node:fs';
+
 function timestamp() {
   return new Date().toISOString();
 }
+
+mkdirSync('logs', { recursive: true });
 
 function write(module, level, message) {
   const line = `[${level.toUpperCase()}] ${timestamp()} [${module}] - ${message}`;
   if (level === 'error') console.error(line);
   else if (level === 'warn') console.warn(line);
   else console.log(line);
+  appendFileSync('logs/test.log', line + '\n');
 }
 
 export function createLogger(module) {

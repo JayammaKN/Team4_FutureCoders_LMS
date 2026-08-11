@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import { test } from '../../fixture/fixtures.js';
 
-
 const { Given, When, Then } = createBdd(test);
 
 Given('Admin is on batch page with multiple program records', async ({batchPage}) => {

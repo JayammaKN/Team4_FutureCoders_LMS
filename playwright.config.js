@@ -27,7 +27,7 @@ export default defineConfig({
   // reporter: 'html',
 
   reporter: [
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['html', { outputFolder: 'playwright-report', open: 'on-failure' }],
     ['allure-playwright', { outputFolder: 'allure-results' }]
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -38,8 +38,9 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    video: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    headless: false,
+    headless: true,
   },
 
   /* Configure projects for major browsers */
@@ -49,8 +50,8 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
-    /*{
+/*
+    {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
@@ -59,7 +60,7 @@ export default defineConfig({
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
-
+*/
     /* Test against mobile viewports. */
     // {
     //   name: 'Mobile Chrome',

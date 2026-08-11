@@ -57,9 +57,18 @@ pipeline {
   post {
     always {
       script {
-        osCmd('npx allure generate allure-results --clean -o allure-report || exit 0')
+        // Publish the report via the Allure plugin so a clickable
+        // "Allure Report" link appears on the job page
+        allure([
+          includeProperties: false,
+          jdk: '',
+          report: 'allure-report',
+          results: [[path: 'allure-results']],
+          cleanReport: true,
+          cleanResults: true
+        ])
       }
-      archiveArtifacts artifacts: 'playwright-report/**, allure-report/**, test-results/**, logs/**',
+      archiveArtifacts artifacts: 'playwright-report/**, test-results/**, logs/**',
         allowEmptyArchive: true
     }
     success {

@@ -8,7 +8,7 @@ const testDir = defineBddConfig({
 
   features: ['tests/features/**/*.feature'],
   steps: [
-    'tests/steps/**/*steps.js',
+    'tests/steps/**/*.steps.js',
     'tests/fixture/fixtures.js',
   ]
 });
@@ -38,6 +38,8 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    headless: false,
   },
 
   /* Configure projects for major browsers */
@@ -48,7 +50,7 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
 
-    {
+    /*{
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },

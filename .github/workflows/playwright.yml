@@ -1,7 +1,7 @@
 name: Playwright BDD Tests
 on:
   push:
-    branches: [ main, master, Jaya_08_05 ]
+    branches: [ main, master]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
@@ -20,8 +20,8 @@ jobs:
       LMS_PASSWORD: ${{ secrets.LMS_PASSWORD }}
       LMS_ROLE: ${{ secrets.LMS_ROLE }}
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v5
+    - uses: actions/setup-node@v5
       with:
         node-version: lts/*
         cache: npm
@@ -37,7 +37,7 @@ jobs:
       run: npx bddgen
     - name: Run Playwright tests
       run: npx playwright test
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       if: ${{ !cancelled() }}
       with:
         name: playwright-report-${{ matrix.os }}

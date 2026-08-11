@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
-import { test } from '../fixture/fixtures.js';
-import { createLogger } from '../../utils/Logger.js';
+import { test } from '../../fixture/fixtures.js';
+import { createLogger } from '../../../utils/logger.js';
 const logger = createLogger("BatchSteps");
 
 

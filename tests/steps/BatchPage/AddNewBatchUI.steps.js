@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
-import { test } from '../fixture/fixtures.js';
-import { createLogger } from '../../utils/Logger.js';
+import { test } from '../../fixture/fixtures.js';
+import { createLogger } from '../../../utils/Logger.js';
 const logger = createLogger("BatchSteps");
 
 
@@ -18,7 +18,7 @@ Given('Admin is on the batch page', async ({batchPage}) => {
 });
 
 When('Admin clicks on {string} under the {string} menu bar in the manage batch page', async ({batchPage}, arg, arg1) => {
-    logger.info(`Admin clicks submenu: ${submenu} under menu: ${menu}`);
+    // logger.info(`Admin clicks submenu: ${submenu} under menu: ${menu}`);
     await batchPage.clickAddNewBatchButton();
 });
 

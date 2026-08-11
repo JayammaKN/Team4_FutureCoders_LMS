@@ -1,3 +1,39 @@
+def isWindows() {
+    return System.getProperty('os.name').toLowerCase().contains('win')
+}
+
+def runScript(String command) {
+    if (isWindows()) {
+        bat command
+    } else {
+        sh command
+    }
+}
+
+def removeDir(String dir) {
+    if (isWindows()) {
+        bat "if exist ${dir} rmdir /s /q ${dir}"
+    } else {
+        sh "rm -rf ${dir}"
+    }
+}
+
+def makeDir(String dir) {
+    if (isWindows()) {
+        bat "if not exist ${dir} mkdir ${dir}"
+    } else {
+        sh "mkdir -p ${dir}"
+    }
+}
+
+def checkEnv(String varName) {
+    if (isWindows()) {
+        bat "if defined ${varName} (echo ${varName} is set) else (echo ${varName} is NOT set)"
+    } else {
+        sh "if [ -n \"$${varName}\" ]; then echo \"${varName} is set\"; else echo \"${varName} is NOT set\"; fi"
+    }
+}
+
 pipeline {
     agent any
 
@@ -22,52 +58,52 @@ pipeline {
 
         stage('Verify Versions') {
             steps {
-                sh 'node -v'
-                sh 'npm -v'
-                sh 'java -version'
+                runScript('node -v')
+                runScript('npm -v')
+                runScript('java -version')
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm ci'
+                runScript('npm ci')
             }
         }
 
         stage('Verify Environment') {
             steps {
-                sh 'if [ -n "$LMS_URL" ]; then echo "LMS_URL is set"; else echo "LMS_URL is NOT set"; fi'
-                sh 'if [ -n "$LMS_USERNAME" ]; then echo "LMS_USERNAME is set"; else echo "LMS_USERNAME is NOT set"; fi'
-                sh 'if [ -n "$LMS_PASSWORD" ]; then echo "LMS_PASSWORD is set"; else echo "LMS_PASSWORD is NOT set"; fi'
-                sh 'if [ -n "$LMS_ROLE" ]; then echo "LMS_ROLE is set"; else echo "LMS_ROLE is NOT set"; fi'
+                checkEnv('LMS_URL')
+                checkEnv('LMS_USERNAME')
+                checkEnv('LMS_PASSWORD')
+                checkEnv('LMS_ROLE')
             }
         }
 
         stage('Generate BDD Tests') {
             steps {
-                sh 'npx bddgen'
+                runScript('npx bddgen')
             }
         }
 
         stage('Install Playwright Browsers') {
             steps {
-                sh 'npx playwright install'
+                runScript('npx playwright install')
             }
         }
 
         stage('Run Playwright Tests') {
             steps {
-                sh 'rm -rf allure-results'
-                sh 'rm -rf allure-report'
-                sh 'rm -rf test-results'
-                sh 'rm -rf playwright-report'
-                sh 'mkdir -p allure-results'
-                sh 'npx playwright test --grep ".features-gen/tests/features/program" --project=chromium'
+                removeDir('allure-results')
+                removeDir('allure-report')
+                removeDir('test-results')
+                removeDir('playwright-report')
+                makeDir('allure-results')
+                runScript('npx playwright test --grep ".features-gen/tests/features/program" --project=chromium')
             }
         }
         stage('Generate Allure Report') {
             steps {
-                sh 'npx allure-commandline generate allure-results --clean -o allure-report'
+                runScript('npx allure-commandline generate allure-results --clean -o allure-report')
             }
         }
     }

@@ -3,7 +3,6 @@ import { createBdd } from 'playwright-bdd';
 import { test } from '../../fixture/fixtures.js';
 import { createLogger } from '../../../utils/logger.js';
 const logger = createLogger('Logout');
-import logoutData from '../../test-data/logoutData.json' with { type: 'json' };
 
 const { Given, When, Then } = createBdd(test);
 
@@ -19,7 +18,7 @@ When('Admin clicks on the logout in the menu bar', async ({ logoutFixture }) => 
 });
 
 Then('Admin should be redirected to login page', async ({ page, logoutFixture }) => {
-  await expect(page).toHaveURL(new RegExp(logoutData.loginPageUrl));
+  await expect(page).toHaveURL(/login/);
   await expect(logoutFixture.loginButton).toBeVisible();
   logger.logoutSuccess();
 });

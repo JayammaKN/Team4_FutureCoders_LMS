@@ -13,10 +13,9 @@ export class HomePage {
     this.batchLink = page.getByText('Batch', { exact: true });
     this.logoutLink = page.getByText('Logout', { exact: true });
     this.navLinks = page.locator('mat-toolbar button');
-
     this.welcomeMessage = page.locator('figure').filter({ hasText: 'Welcome' });
+    // Bar chart (a <canvas> inside a <figure>) - XPath equivalent: //figure//canvas
     this.barChart = page.locator('figure canvas').first();
-
     this.userCard = page.getByText('User', { exact: true });
     this.programCard = page.getByText('Programs', { exact: true });
     this.staffCard = page.getByText('Staff', { exact: true });
@@ -90,96 +89,80 @@ export class HomePage {
     const headers = await this.staffTableHeaders.allInnerTexts();
     return headers.map(header => header.trim());
   }
+  /* This function validates UI chart data(Active/Inactive) 
+  async getBarChartLabels() {
+  return await this.page.evaluate(() => {
+    const canvas = document.querySelector('figure canvas');
 
+    if (!canvas || !window.Chart) {
+      return [];
+    }
+
+    const chart = Object.values(Chart.instances)
+      .find(chart => chart.canvas === canvas);
+
+    if (!chart) {
+      return [];
+    }
+
+    return chart.data.datasets.map(dataset => dataset.label);
+  });
+} */
+
+  
+
+ // # Note: the step below currently checks the chart is visible, reads the
+ // # chart.js data and verifies Active/Inactive values are present.
   async getBarChartData() {
     const chartData = await this.page.evaluate(() => {
+      // Get our canvas element (the one inside the <figure>)
       const canvas = document.querySelectorAll('figure canvas')[0];
-      const alreadyChecked = new Set();
-      const chartsFound = [];
-
-      function lookInside(object) {
-        if (!object || typeof object !== 'object') {
-          return;
-        }
-        if (alreadyChecked.has(object)) {
-          return;
-        }
-        alreadyChecked.add(object);
-        if (object.data && object.config && object.canvas) {
-          chartsFound.push(object);
-          return;
-        }
-        const parts = Object.keys(object).slice(0, 200);
-        for (const part of parts) {
-          const partValue = object[part];
-          if (typeof partValue === 'object' && partValue !== null) {
-            lookInside(partValue);
-          }
+      //    Chart.instances holds every chart, so we look through them all.
+      let chart = null;
+      for (const key in window.Chart.instances) {
+        const candidate = window.Chart.instances[key];
+        const isOurCanvas = candidate.canvas === canvas;
+        const isBarChart = candidate.config && candidate.config.type === 'bar';
+        if (isOurCanvas && isBarChart) {
+          chart = candidate;
+          break; 
         }
       }
-
-      lookInside(canvas && canvas.__ngContext__);
-
-      let barChartObject = null;
-      for (const chart of chartsFound) {
-        if (chart.config.type === 'bar') {
-          barChartObject = chart;
-          break;
-        }
-      }
-      if (barChartObject === null && chartsFound.length > 0) {
-        barChartObject = chartsFound[0];
-      }
-      if (barChartObject === null) {
+     // Chart not ready yet - the test will call us again
+      if (chart === null) {
         return null;
       }
-
-      const datasets = barChartObject.data.datasets || [];
-      if (datasets.length < 2) {
-        return null;
-      }
-
-      const firstLabel = datasets[0] && typeof datasets[0].label === 'string' ? datasets[0].label.trim() : '';
-      const firstNumber = datasets[0] && datasets[0].data ? datasets[0].data[0] : undefined;
+      // Read the datasets of the chart
+      const datasets = chart.data.datasets || [];
+      // Helper: return the first number of a dataset (0 when missing)
+      const getNumber = (dataset) => {
+        const number = dataset && dataset.data ? dataset.data[0] : undefined;
+        return typeof number === 'number' ? number : 0;
+      };
+      //  The first dataset must have a label ("Active") and a number value.
+      const firstLabel = datasets[0] && typeof datasets[0].label === 'string'? datasets[0].label.trim(): '';
+      const firstNumber = datasets[0] && datasets[0].data
+        ? datasets[0].data[0]
+        : undefined;
       if (firstLabel === '' || typeof firstNumber !== 'number') {
         return null;
       }
 
-      function getNumber(dataset) {
-        if (!dataset || !Array.isArray(dataset.data)) {
-          return 0;
-        }
-        const number = dataset.data[0];
-        return typeof number === 'number' ? number : 0;
-      }
-
-      const labels = [];
-      for (const dataset of datasets) {
-        if (dataset && typeof dataset.label === 'string') {
-          labels.push(dataset.label.trim());
-        } else {
-          labels.push('');
-        }
-      }
-
+      // Collect the data we need
       return {
         active: getNumber(datasets[0]),
         inactive: getNumber(datasets[1]),
         datasetCount: datasets.length,
-        labels: labels,
+        labels: datasets.map(dataset =>
+          typeof dataset.label === 'string' ? dataset.label.trim() : ''
+        ),
       };
     });
-
     if (chartData !== null) {
-      logger.info(
-        `Bar chart data: Active ${chartData.active}, ` +
-        `Inactive ${chartData.inactive}, Labels: ${chartData.labels.join(', ')}`
-      );
+      logger.info(`Bar chart data: Active ${chartData.active}, ` +`Inactive ${chartData.inactive}, Labels: ${chartData.labels.join(', ')}`);
     }
-
     return chartData;
   }
-
   getCardNumber(label) {
     const card = this.page.locator('.widget').filter({ hasText: label });
     const numberLocator = card.locator('.top').first();

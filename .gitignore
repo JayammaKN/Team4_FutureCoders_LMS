@@ -19,3 +19,7 @@ tests/.features-gen/
 
 # Logs
 /logs/
+
+# Environment variables
+.env
+.env.local

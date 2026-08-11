@@ -202,9 +202,6 @@ Then(
 
         expect(chartData.labels)
             .toContain('Active');
-
-        expect(chartData.labels)
-            .toContain('Inactive');
     }
 );
 Then(

@@ -19,6 +19,14 @@
     "validEditData": {
         "description": "Descrition about Arrays",
         "noOfClasses": "10"
+    },
+    "searchBarData": {
+        "batchName": "JavaCourse",
+        "batchDescription": "Java Coding",
+        "programName": "Playwright",
+        "noOfClasses": "2",
+        "nonexistingBatch": "ASDC",
+        "batchStatus": "Active"
     }
 
 }

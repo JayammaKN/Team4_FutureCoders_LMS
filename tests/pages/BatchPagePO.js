@@ -45,6 +45,25 @@ export default class BatchPagePO {
     this.yesDeleteButton = page.locator('.p-confirm-dialog-accept');
     this.batchRows = this.batchRows = page.locator("p-table table tbody tr");
     this.deleteDialogBoxCloseIcon = page.locator('p-confirmDialog button.p-dialog-header-close');
+    this.ckeckbox = page.locator("tbody tr .p-checkbox-box");
+    this.nextPage = page.locator('p-paginator .p-paginator-next');
+    this.lastPage = page.locator(' p-paginator .p-paginator-last');
+    this.pageLinks = page.locator("p-paginator .p-paginator-pages button");
+    this.previousPage = page.locator('p-paginator .p-paginator-prev');
+    this.firstPage = page.locator('p-paginator .p-paginator-first');
+    this.tableRows = page.locator('p-table tbody tr');
+    this.searchBar = page.getByPlaceholder('Search...');
+    this.batchNameColumn = page.locator('p-table table tbody tr td:nth-child(2)');
+    // this.batchNameColumn = page.locator('p-table .p-datatable-wrapper table tbody.p-datatable-tbody tr td:nth-child(1) .ng-star-inserted');
+    this.batchDescriptiomColumn = page.locator('p-table table tbody tr td:nth-child(3)');
+    this.batchStatusColumn = page.locator('p-table table tbody tr td:nth-child(4)');
+    this.NoOfClassesColumn = page.locator('p-table table tbody tr td:nth-child(5)');
+    this.programNameColumn = page.locator('p-table table tbody tr td:nth-child(6)');
+    this.sortBatchName = page.locator("//th[@psortablecolumn='batchName']//i[contains(@class,'p-sortable-column-icon')]");
+    this.sortBatchDescription = page.locator("//th[@psortablecolumn='batchDescription']//i[contains(@class,'p-sortable-column-icon')]")
+    this.sortBatchStatus = page.locator("//th[@psortablecolumn='batchStatus']//i[contains(@class,'p-sortable-column-icon')]");
+    this.sortNoOfClasses = page.locator("//th[@psortablecolumn='batchNoOfClasses']//i[contains(@class,'p-sortable-column-icon')]");
+    this.sortProgramName = page.locator("//th[@psortablecolumn='programName']//i[contains(@class,'p-sortable-column-icon')]");
 
 
 
@@ -62,7 +81,7 @@ export default class BatchPagePO {
   }
 
   async closeOverlay() {
-    await this.page.mouse.click(0, 0); // Clicks at the top-left corner to dismiss the overlay
+    await this.page.mouse.click(0, 0); 
   }
   async verifyDeleteIconInHeader(){
     return await this.headerdeleteIcon.isDisabled();
@@ -300,6 +319,168 @@ async verifyProgramNameIsSelected() {
     await this.deleteDialogBoxCloseIcon.click();
     await this.deleteDialogBox.waitFor({ state: "hidden" });
   }
+  async selectMultipleCheckBoxes(count=2){
+    for(let i=0; i<count; i++){
+      await this.ckeckbox.nth(i).check();
+    }
+  }
+  async verifyHeaderdeleteIconEnabled(){
+    return await this.headerdeleteIcon.isEnabled();
+  }
+  async clickHeaderdeleteIcon(){
+    await this.headerdeleteIcon.click();
+  }
+  async clickNextPage(){
+    await this.nextPage.click();
+  }
+  async verifyNextPageEnabled(){
+    return await this.nextPage.isEnabled();
+  }
+  async clickLastPage(){
+    await this.lastPage.click();
+  }
+  async isOnLastPage() {
+    const pageCount = await this.pageLinks.count();
+    const lastPageIndex = pageCount - 1;
+
+    const lastPageButton = this.pageLinks.nth(lastPageIndex);
+    const classes = await lastPageButton.getAttribute("class");
+
+    return classes.includes("p-highlight");
+}
+async verifyNextPageDiabled(){
+  return await this.nextPage.isDisabled();
+}
+async verifyLastPageState() {
+    const lastPage = await this.isOnLastPage();
+    const nextDisabled = await this.verifyNextPageDiabled();
+
+    return lastPage && nextDisabled;
+}
+async clickPreviousPage(){
+  await this.previousPage.click();
+}
+async verifyPreviousPageDiabled(){
+  return await this.previousPage.isDisabled();
+}
+async getCurrentPageNumber() {
+    const count = await this.pageLinks.count();
+
+    for (let i = 0; i < count; i++) {
+        const pages = await this.pageLinks.nth(i).getAttribute("class");
+        if (pages.includes("p-highlight")) {
+          const pageNo = i+1;
+           console.log("Current Page:", pageNo);
+            return pageNo;   
+        }
+    }
+}
+async clickFirstPage(){
+  await this.firstPage.click();
+}
+async verifyFirstPageDiabled(){
+  return await this.firstPage.isDisabled();
+}
+async isFirstPageDisabled() {
+    const pages = await this.firstPage.getAttribute("class");
+    return pages.includes("p-disabled");
+}
+async verifyNextPageIsEnabled(){
+  return await this.nextPage.isEnabled();
+}
+async verifyLastPageIsEnabled(){
+  return await this.lastPage.isEnabled();
+}
+async enterSearchText(searchKey){
+  const searchText = batchData.searchBarData[searchKey];
+  await this.searchBar.fill(searchText);
+}
+async getRowCount(){
+  return await this.tableRows.count();
+}
+async getColumnText(column){
+  await this.page.waitForTimeout(300);
+  const count = await column.count();
+  const values = [];
+  for(let i=0; i < count; i++){
+    const Text = await column.nth(i).innerText();
+        values.push(Text.trim());
+  }
+  return values;
+}
+getColumn(searchKey){
+  const columnMap = {
+    batchName: this.batchNameColumn,
+    batchDescription: this.batchDescriptiomColumn,
+    noOfClasses: this.NoOfClassesColumn,
+    batchStatus: this.batchStatusColumn,
+    programName: this.programNameColumn
+  };
+  return columnMap[searchKey];
+}
+async enterNonExistingBatchName(){
+  const searchText = batchData.searchBarData;
+  await this.searchBar.fill(searchText.nonexistingBatch);
+  await this.page.waitForTimeout(300);
+}
+async clickSort(columnKey){
+  const sortMap = {
+        batchName: this.sortBatchName,
+        batchDescription: this.sortBatchDescription,
+        noOfClasses: this.sortNoOfClasses,
+        batchStatus: this.sortBatchStatus,
+        batchProgramName: this.sortProgramName
+    };
+    await sortMap[columnKey].click();
+    await this.page.waitForTimeout(500);
+  }
+  async getColumnValues(columnKey){
+  const columnMap = {
+        batchName: this.batchNameColumn,
+        batchDescription: this.batchDescriptiomColumn,
+        noOfClasses: this.NoOfClassesColumn,
+        batchStatus: this.batchStatusColumn,
+        batchProgramName: this.programNameColumn
+    };
+    const column = columnMap[columnKey];
+    const count = await column.count();
+    const values = [];
+    for (let i = 0; i < count; i++) {
+        const text = await column.nth(i).textContent();
+        values.push(text.trim());
+    }
+    console.log("VALUES:", values);
+    return values;
+  }
+   isAscendingOrder(values) {
+    //  if (!Array.isArray(values)) {
+    //     throw new Error("isAscendingOrder: values is not an array");
+    // }
+        const sorted = [...values].sort((a, b) => a.localeCompare(b));
+        return JSON.stringify(values) === JSON.stringify(sorted);
+    }
+    isDescendingOrder(values) {
+    //   if (!Array.isArray(values)) {
+    //     throw new Error("isDescendingOrder: values is not an array");
+    // }
+        const sorted = [...values].sort((a, b) => b.localeCompare(a));
+        return JSON.stringify(values) === JSON.stringify(sorted);
+    }
+     isAscendingOrderNumeric(values) {
+        const nums = values.map(Number);
+        const sorted = [...nums].sort((a, b) => a - b);
+        return JSON.stringify(nums) === JSON.stringify(sorted);
+    }
+    isDescendingOrderNumeric(values) {
+        const nums = values.map(Number);
+        const sorted = [...nums].sort((a, b) => b - a);
+        return JSON.stringify(nums) === JSON.stringify(sorted);
+    }
+
+
+
+
+
 
 }
     

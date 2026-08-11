@@ -6,7 +6,7 @@ dotenv.config();
 
 const testDir = defineBddConfig({
 
-  features: ['tests/features/DeleteBatch.feature'],
+  features: ['tests/features/**/*.feature'],
   steps: [
     'tests/steps/**/*.steps.js',
     'tests/fixture/fixtures.js',

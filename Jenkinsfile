@@ -1,5 +1,5 @@
 def isWindows() {
-    return System.getProperty('os.name').toLowerCase().contains('win')
+    return !isUnix()
 }
 
 def runScript(String command) {

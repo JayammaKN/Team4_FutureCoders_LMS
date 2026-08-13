@@ -1,7 +1,6 @@
 
 import { createLogger } from '../../utils/logger.js';
 const logger = createLogger('Logout');
-
 export default class LogoutPage {
   constructor(page) {
     this.page = page;

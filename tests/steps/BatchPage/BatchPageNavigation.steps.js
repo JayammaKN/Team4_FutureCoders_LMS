@@ -1,9 +1,9 @@
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import { test } from '../../fixture/fixtures.js';
-// import logger from '../../../utils/logger.js';
-
+import {createLogger} from '../../../utils/logger.js';
 const { Given, When, Then } = createBdd(test);
+const logger = createLogger("BatchPageNavigation");
 
 When('Admin clicks login in button after entering  a valid credentials', async ({loginFixture}) => {
   await loginFixture.login();

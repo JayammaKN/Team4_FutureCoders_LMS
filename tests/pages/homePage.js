@@ -1,4 +1,4 @@
-import { createLogger } from '../../utils/logger.js';
+import {createLogger} from '../../utils/logger.js';
 const logger = createLogger('Home');
 
 export class HomePage {
@@ -109,9 +109,6 @@ export class HomePage {
   });
 } */
 
-  
-
- // # Note: the step below currently checks the chart is visible, reads the
  // # chart.js data and verifies Active/Inactive values are present.
   async getBarChartData() {
     const chartData = await this.page.evaluate(() => {

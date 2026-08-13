@@ -8,10 +8,7 @@ export default class LoginPage {
     this.page = page;
     this.env = env;
     this.test = test;
-
-    // Every login attempt is saved here (with the error messages),
-    // so the test steps can check them later.
-    this.attempts = [];
+    this.attempts = []; // Every login attempt is saved here (with the error messages),
     this.companyName = this.page.locator('img[src*="LMS-logo"]');
     this.logo = this.page.locator('img[src*="LMS-logo"]');
     this.userField = this.page.getByLabel('User');
@@ -60,17 +57,13 @@ export default class LoginPage {
     this.invalidUrlResults = [];
     for (const url of loginData.invalidUrls) {
       await this.openInvalidUrl(url);
-      this.invalidUrlResults.push({
-        url,
-        showsError: await this.invalidUrlShowsError(),
+      this.invalidUrlResults.push({url,showsError: await this.invalidUrlShowsError(),
       });
     }
   }
 
   async getInvalidUrlFailures() {
-    return this.invalidUrlResults
-      .filter((result) => !result.showsError)
-      .map((result) => result.url);
+    return this.invalidUrlResults.filter((result) => !result.showsError).map((result) => result.url);
   }
 
   async captureStatus(url) {

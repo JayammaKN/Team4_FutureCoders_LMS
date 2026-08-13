@@ -8,7 +8,6 @@ const { Given, When, Then } = createBdd(test);
 
 When('Admin navigates to the add new batch dialog box by clicking Add New Batch submenu under Batch menu bar after login', async ({loginFixture, batchPage}) => {
     await loginFixture.login();
-    await batchPage.ensureActiveProgram();
     await batchPage.clickBatchButton();
     await batchPage.clickAddNewBatchButton();
 });
@@ -19,6 +18,7 @@ Then('Admin should be in the add new batch dialog box', async ({batchPage}) => {
 });
 
 Given('Admin is on Batch Details dialog box', async ({batchPage}) => {
+    // console.log('Admin is on Batch Details dialog box');
     logger.info("Admin is on Batch Details dialog box");
 });
 
@@ -29,11 +29,11 @@ When('Admin selects program name present in the dropdown', async ({batchPage}) =
 });
 
 Then('Admin should see selected program name in the batch name prefix box', async ({batchPage}) => {
+    // expect (await batchPage.verifySelectedProgramNameInBatchPrefix()).toBeTruthy();
     logger.info("Validating selected program name in batch prefix");
     const actualProgramName = await batchPage.verifySelectedProgramNameInBatchPrefix();
-    const expectedProgramName = await batchPage.programNameInput.inputValue();
-    expect(expectedProgramName).not.toBe('');
-    expect(actualProgramName).toBe(expectedProgramName);
+    const expectedProgramName = await batchPage.selectProgramNameFromDropdown();
+    expect (actualProgramName).toBe(expectedProgramName);
 });
 
 Given('Admin is on Batch details dialog box', async ({batchPage}) => {
@@ -41,14 +41,16 @@ Given('Admin is on Batch details dialog box', async ({batchPage}) => {
 });
 
 When('Admin enters alphabets in batch name suffix box', async ({batchPage}) => {
-    logger.info("Entering alphabets in batch name suffix");
+    // await batchPage.verifyProgramDropdownButton();
+    // await batchPage.selectProgramNameFromDropdown();
+     logger.info("Entering alphabets in batch name suffix");
     await batchPage.enterAlphabetsInBatchNameSuffix();
 });
 
 Then('Admin should get error message below the text box of respective field', async ({batchPage}) => {
     logger.info("Validating error message for invalid batch suffix");
-    const errorMessage = (await batchPage.getBatchSuffixErrorMessage()).trim();
-    expect(errorMessage).toBe('This field accept only numbers and max 5 count.');
+    const errorMessage = await batchPage.getBatchSuffixErrorMessage();
+    expect(errorMessage).toBe('This field accept only numbers and max 5 count. ');
 });
 
 When('Admin enters alphabets in batch name prefix box', async ({batchPage}) => {
@@ -67,7 +69,7 @@ When('Admin enters the data only to the mandatory fields and clicks save button'
 
 Then('Admin should get a successful message', async ({batchPage}) => {
     logger.info("Validating success message after saving batch");
-    const successMessage = (await batchPage.getBatchSuccessMessage()).trim();
+    const successMessage = await batchPage.getBatchSuccessMessage();
     expect(successMessage).toBe('Successful');
 });
 

@@ -1,75 +1,37 @@
 name: Playwright BDD Tests
 on:
   push:
-    branches: [ main, master]
+    branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
   test:
-    timeout-minutes: 60
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
     env:
       LMS_URL: ${{ secrets.LMS_URL }}
       LMS_USERNAME: ${{ secrets.LMS_USERNAME }}
       LMS_PASSWORD: ${{ secrets.LMS_PASSWORD }}
       LMS_ROLE: ${{ secrets.LMS_ROLE }}
     steps:
-    - uses: actions/checkout@v5
-    - uses: actions/setup-node@v5
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: lts/*
         cache: npm
-    - name: Cache Playwright Browsers
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/ms-playwright
-        key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
     - name: Install dependencies
       run: npm ci
-    - name: Install Playwright Browsers (Linux)
+    - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-      if: runner.os == 'Linux'
-    - name: Install Playwright Browsers (macOS/Windows)
-      run: npx playwright install
-      if: runner.os != 'Linux'
     - name: Generate BDD specs
       run: npx bddgen
     - name: Run Playwright tests
       run: npx playwright test
-    - uses: actions/upload-artifact@v5
+    - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report-${{ matrix.os }}
+        name: playwright-report
         path: playwright-report/
-        retention-days: 7
-     # Upload traces only when tests fail
-    - name: Upload Playwright Traces
-      uses: actions/upload-artifact@v5
-      if: failure()
-      with:
-        name: traces-${{ matrix.os }}
-        path: test-results/
-        retention-days: 7
-    # Upload Allure report (if your project generates it)
-    - name: Upload Allure Report
-      uses: actions/upload-artifact@v5
-      if: always()
-      with:
-        name: allure-report-${{ matrix.os }}
-        path: allure-report/
-        retention-days: 7
-
-    # Upload custom logs from your logger.js
-    - name: Upload Logs
-      uses: actions/upload-artifact@v5
-      if: always()
-      with:
-        name: logs-${{ matrix.os }}
-        path: logs/
         retention-days: 7

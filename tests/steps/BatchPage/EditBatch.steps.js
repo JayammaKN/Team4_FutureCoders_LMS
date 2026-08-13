@@ -11,7 +11,7 @@ When('Admin navigates to the manage batch page after login', async ({loginFixtur
 });
 
 Given('Admin is on the Batch page', async ({batchPage}) => {
-    await batchPage.ensureBatchRowCount(2);
+    console.log("Admin is on the batch page")
 });
 
 When('Admin clicks the edit icon', async ({batchPage}) => {

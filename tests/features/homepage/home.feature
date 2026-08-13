@@ -34,19 +34,8 @@ Feature: Home Page
 
   Scenario: Welcome Message is displayed
     Then Admin should see welcome message with user name and role
-
   # UI issue found in the bar chart (Active vs Inactive):
-  # The chart shows an "Active" dataset value, but the "Inactive"
-  # dataset is missing/unlabeled (empty or null value).
-  #
-  # Scenario to validate Active and Inactive in the bar chart:
-  #   Scenario: Bar chart shows Active and Inactive values
-  #     Then Admin should see the Active user count in the bar chart
-  #     And Admin should see the Inactive user count in the bar chart
-  #     And the bar chart should show exactly 2 datasets (Active and Inactive)
-  #
-  # Note: the step below currently checks the chart is visible, reads the
-  # chart.js data and verifies Active/Inactive values are present.
+  # The chart shows an "Active" dataset value, but the "Inactive" dataset is missing/unlabeled/undefined (empty or null value).
   Scenario: Bar chart presence
     Then Admin should see bar chart for Active and inactive user
 

@@ -93,7 +93,7 @@ export class ProgramPage
   async searchProgram() {
     await this.page.mouse.click(500, 300);
     await this.searchInput.fill(this.programName);;
-    await expect(this.page.getByText(this.programName)).toBeVisible();
+    await expect(this.page.getByRole('row', { name: this.programName })).toBeVisible();
     await expect(this.page.getByText(this.programDescription)).toBeVisible();
     //await expect(this.page.getByText(this.programName, { exact: true })).toBeVisible();
     //await expect(this.page.getByText(this.programDescription, { exact: true })).toBeVisible();

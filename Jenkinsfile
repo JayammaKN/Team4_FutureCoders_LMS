@@ -8,7 +8,7 @@ def runCmd(String cmd) {
 }
 
 pipeline {
-    agent none
+    agent any
 
     stages {
 
